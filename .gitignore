@@ -1,0 +1,13 @@
+node_modules
+.expo/
+dist/
+*.log
+.DS_Store
+
+
+android/
+ios/
+
+.idea/
+.vscode/
+Archive.zip

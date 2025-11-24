@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "oxify",
+    "slug": "oxify",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "jsEngine": "hermes",
+      "bundleIdentifier": "com.amitkumarsingh.oxify",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#14181B"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.amitkumarsingh.oxify",
+      "jsEngine": "hermes",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.927622491931-g2o5jvoimej5o9l1m8pvagp79ci5fjgi"
+        }
+      ],
+      "expo-apple-authentication",
+      "expo-font"
+    ],
+    "extra": {
+      "name": "Oxify",
+      "slug": "oxify",
+      "eas": {
+        "projectId": "28cc5e2f-ad03-4e20-b2ef-d5e86e3671cc"
+      },
+      "router": {}
+    },
+    "owner": "amit6"
+  }
+}
