@@ -35,9 +35,7 @@ import RenderFooter from "@/components/common/RenderFooter";
 import { RenderEmptyComponent } from "@/components/common/renderEmptyComponent";
 import TabSwitcher from "./TabSwitcher";
 import { Shadow } from "react-native-shadow-2";
-const { useFocusEffect } = require("@react-navigation/native");
-import { useAuth } from "@/contexts/AuthContext";
-  import { capitalizeFirst } from "@/utils/capitalizeFirst";
+import { capitalizeFirst } from "@/utils/capitalizeFirst";
 
 // ArticleCard will be imported from SavedArticlesScreen
 const perPage = 20;
@@ -303,15 +301,6 @@ const ProtocolsHubScreen: React.FC = () => {
     };
   }, [articleSearchInput]);
 
-  // set tab background color when screen focuses
-  const { setTabBackgroundColor } = useAuth();
-  useFocusEffect(
-    useCallback(() => {
-      // Set color when screen focuses
-      setTabBackgroundColor("#1B273C");
-    }, [setTabBackgroundColor])
-  );
-
   return (
     <LinearGradient
       colors={[
@@ -337,8 +326,7 @@ const ProtocolsHubScreen: React.FC = () => {
               style={{ width: "100%", marginBottom: 16 }}
             >
               {/* Header */}
-              <View className=" px-4 bg-[#151A1E] pb-[2px] pt-4"
-              >
+              <View className=" px-4 bg-[#151A1E] pb-[2px] pt-4">
                 <View className="flex-row items-center mb-6">
                   <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons
@@ -359,13 +347,14 @@ const ProtocolsHubScreen: React.FC = () => {
                   </Text>
                 </View>
                 {/* Segmented Control */}
-                <TabSwitcher activeTab={activeTab} setActiveTab={setActiveTab} />
+                <TabSwitcher
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
               </View>
             </Shadow>
 
-
             <View className="h-full px-4">
-
               {/* Scrollable body (search + chips + content) */}
               <>
                 {/* Search Bar */}
@@ -444,15 +433,14 @@ const ProtocolsHubScreen: React.FC = () => {
                   >
                     {(activeTab === "protocols"
                       ? [
-                        { id: undefined, name: "All" },
-                        ...(((categories as any)?.data?.data as any[]) ||
-                          []),
-                      ]
+                          { id: undefined, name: "All" },
+                          ...(((categories as any)?.data?.data as any[]) || []),
+                        ]
                       : [
-                        { id: undefined, name: "All" },
-                        ...(((learningCategories as any)?.data
-                          ?.data as any[]) || []),
-                      ]
+                          { id: undefined, name: "All" },
+                          ...(((learningCategories as any)?.data
+                            ?.data as any[]) || []),
+                        ]
                     ).map((c: any) => {
                       const isProtocols = activeTab === "protocols";
                       const key = isProtocols
@@ -461,11 +449,11 @@ const ProtocolsHubScreen: React.FC = () => {
                       const label = isProtocols ? c.name : c.name;
                       const isActive = isProtocols
                         ? (activeCategoryId === undefined &&
-                          c.id === undefined) ||
-                        activeCategoryId === c.id
+                            c.id === undefined) ||
+                          activeCategoryId === c.id
                         : (activeLearningCategoryId === undefined &&
-                          c.id === undefined) ||
-                        activeLearningCategoryId === c.id;
+                            c.id === undefined) ||
+                          activeLearningCategoryId === c.id;
                       return (
                         <TouchableOpacity
                           key={key}
@@ -476,13 +464,15 @@ const ProtocolsHubScreen: React.FC = () => {
                               setActiveLearningCategoryId(c.id);
                             }
                           }}
-                          className={`px-3 py-1 mr-3 rounded-lg border border-[#616B79] ${isActive ? "bg-[#3A4049]" : ""
-                            }`}
+                          className={`px-3 py-1 mr-3 rounded-lg border border-[#616B79] ${
+                            isActive ? "bg-[#3A4049]" : ""
+                          }`}
                         >
                           <Text
                             style={{ fontSize: 12, fontFamily: "InterMedium" }}
-                            className={` ${isActive ? "text-white" : "text-gray-500"
-                              }`}
+                            className={` ${
+                              isActive ? "text-white" : "text-gray-500"
+                            }`}
                           >
                             {capitalizeFirst(label)}
                           </Text>
@@ -544,7 +534,7 @@ const ProtocolsHubScreen: React.FC = () => {
                         />
                       )}
                       contentContainerStyle={{
-                        paddingBottom: 60,
+                        paddingBottom: 200,
                       }}
                       showsVerticalScrollIndicator={false}
                     />
@@ -573,7 +563,7 @@ const ProtocolsHubScreen: React.FC = () => {
                         />
                       )}
                       contentContainerStyle={{
-                        paddingBottom: 60,
+                        paddingBottom: 200,
                       }}
                       showsVerticalScrollIndicator={false}
                     />

@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 
 import React, { useEffect } from "react";
 import AppNavigator from "./navigation/AppNavigator";
@@ -16,7 +16,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { LogBox } from "react-native";
 LogBox.ignoreLogs(["CHHapticPattern", "hapticpatternlibrary.plist"]);
-
 
 import { useFonts } from "expo-font";
 
@@ -42,9 +41,6 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
-
-
-
 
 // Global Text & TextInput Configuration - using a safer approach
 // Disable default system font scaling globally
@@ -90,18 +86,15 @@ const App: React.FC = () => {
     Ramabhadra: require("@/assets/fonts/Ramabhadra-Regular.ttf"),
   });
 
-
   if (!fontsLoaded) return null;
+
   return (
     <ErrorBoundary>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NetworkProvider>
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
-              <View
-                className='bg-gray-950'
-                style={{ flex: 1 }}
-              >
+              <View style={{ flex: 1 }}>
                 <AppStatusBar barStyle="light-content" />
                 <AppNavigator />
               </View>

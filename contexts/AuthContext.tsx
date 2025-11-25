@@ -17,8 +17,6 @@ interface AuthContextType {
   login: (userData: UserData) => Promise<void>;
   logout: () => Promise<void>;
   updateChamberSelection: (hasChamber: boolean) => void;
-  tabBackgroundColor?: string;
-  setTabBackgroundColor: (backgroundColor: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -102,9 +100,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setHasChamberSelected(hasChamber);
   };
 
-  // Tab background color
-  const [tabBackgroundColor, setTabBackgroundColor] = useState("");
-
   const value: AuthContextType = {
     user,
     isAuthenticated,
@@ -113,8 +108,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     logout,
     updateChamberSelection,
-    tabBackgroundColor,
-    setTabBackgroundColor,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

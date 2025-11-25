@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert, Platform, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 const { useNavigation } = require("@react-navigation/native");
@@ -189,18 +196,18 @@ const EditDateOfBirthScreen: React.FC = () => {
     >
       <SafeAreaView className="flex-1">
         <AppStatusBar barStyle="light-content" />
-        <View className="flex-1 px-4 py-4">
+        <View className="flex-1 px-4 py-4 pb-[100px]">
           {/* Header */}
           <View className="flex-row items-center mb-6">
             <TouchableOpacity onPress={() => navigation.goBack()} className="">
-              <AntDesign name="left" size={24} color="white" />
+              <AntDesign name="left" size={22} color="#DDE2E5" />
             </TouchableOpacity>
             <Text
-              className="text-white text-center flex-1 mr-6"
+              className="text-center flex-1 mr-6"
               style={{
-                fontFamily: "Inter",
-                fontSize: TEXT_SIZES.lg,
-                fontWeight: "600",
+                fontFamily: "InterSemiBold",
+                fontSize: 18,
+                color: "#DDE2E5",
               }}
             >
               Edit Date of Birth
@@ -210,7 +217,10 @@ const EditDateOfBirthScreen: React.FC = () => {
           {/* Content Area - Takes available space */}
           <View className="flex-1">
             {/* Current Date Display */}
-            <View style={{backgroundColor: "#3A4049"}} className="rounded-t-[12px] p-4 border-b border-[#333333]">
+            <View
+              style={{ backgroundColor: "#3A4049" }}
+              className="rounded-t-[12px] p-4 border-b border-[#333333]"
+            >
               <View className="flex-row justify-between items-center">
                 <Text
                   className="text-[#8BAFCE] text-base font-medium"
@@ -225,7 +235,14 @@ const EditDateOfBirthScreen: React.FC = () => {
             </View>
 
             {/* Calendar Component */}
-            <View style={{ backgroundColor: "#3A4049",borderBottomLeftRadius:12,borderBottomRightRadius:12 }} className="p-6">
+            <View
+              style={{
+                backgroundColor: "#3A4049",
+                borderBottomLeftRadius: 12,
+                borderBottomRightRadius: 12,
+              }}
+              className="p-6"
+            >
               {/* Month and Year Navigation */}
               <View className="flex-row justify-between items-center mb-8 rounded-b-[12px]">
                 {/* Month Navigation */}
@@ -288,7 +305,9 @@ const EditDateOfBirthScreen: React.FC = () => {
                 <View
                   key={`row-${rowIndex}`}
                   className="flex-row justify-between"
-                  style={{ marginBottom: rowIndex < calendarRows.length - 1 ? 10 : 0 }}
+                  style={{
+                    marginBottom: rowIndex < calendarRows.length - 1 ? 10 : 0,
+                  }}
                 >
                   {rowDays.map((day, colIndex) => (
                     <TouchableOpacity
@@ -334,11 +353,14 @@ const EditDateOfBirthScreen: React.FC = () => {
               className={`rounded-[36px]  items-center h-[54px]${
                 isLoading ? "opacity-50" : "opacity-100"
               }`}
-              style={{ backgroundColor: "#6189AD",paddingVertical: 16 }}
+              style={{ backgroundColor: "#6189AD", paddingVertical: 16 }}
               onPress={handleSave}
               disabled={isLoading}
             >
-              <Text className="text-white font-semibold text-base" style={{ fontSize: 16 }}>
+              <Text
+                className="text-white font-semibold text-base"
+                style={{ fontSize: 16 }}
+              >
                 {isLoading ? "Updating..." : "Update"}
               </Text>
             </TouchableOpacity>

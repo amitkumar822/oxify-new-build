@@ -119,12 +119,9 @@ const OnboardingPage2: FC = () => {
             />
           </View>
 
-          <View className="flex-1 justify-center items-center px-1 -mt-[17px]">
+          <View className="flex-1 justify-center items-center px-1 absolute bottom-14 left-0 right-0">
             {/* Page Indicators */}
-            <View
-              className=" absolute flex flex-row justify-center items-center space-x-2"
-              style={{ top: 530 }}
-            >
+            <View className="flex flex-row justify-center items-center space-x-2 mb-[21px]">
               <View className="w-2 h-2 rounded-full bg-[#D9D9D9] mr-2"></View>
               <View className="w-2 h-2 rounded-full bg-[#8BAFCE] mr-2"></View>
               <View className="w-2 h-2 rounded-full bg-[#D9D9D9]"></View>
@@ -132,9 +129,9 @@ const OnboardingPage2: FC = () => {
 
             {/* Content Container */}
             <View
-              className="absolute flex justify-center items-start w-full"
+              className=" flex justify-center items-start w-full"
               style={{
-                top: 550,
+                // top: 550,
                 paddingHorizontal: 16,
                 paddingBottom: 20,
               }}
@@ -145,20 +142,18 @@ const OnboardingPage2: FC = () => {
                   gap: 3,
                 }}
               >
-                <>
+                <Text
+                  className="text-[#6189AD] "
+                  style={{
+                    fontFamily: "InterRegular",
+                    fontSize: 23,
+                    lineHeight: 28,
+                  }}
+                >
+                  02
+                </Text>
+                <View style={{ flex: 1 }}>
                   <Text
-                    className="text-[#6189AD] "
-                    style={{
-                      fontFamily: "InterRegular",
-                      fontSize: 23,
-                    }}
-                  >
-                    02
-                  </Text>
-                </>
-                <View style={{ flex: 1, flexShrink: 1 }}>
-                  <Text
-                    className="text-[#E9EEF2]"
                     style={{
                       fontFamily: "InterRegular",
                       fontSize: 23,
@@ -174,7 +169,7 @@ const OnboardingPage2: FC = () => {
                       fontFamily: "InterRegular",
                       fontSize: 12,
                       lineHeight: 18, // 150%
-                      letterSpacing: -0.23, // -2%
+                      letterSpacing: -0.24, // -2%
                       color: "#6189AD",
                     }}
                   >

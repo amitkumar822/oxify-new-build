@@ -31,108 +31,10 @@ import { screenWidth } from "@/constants/comman";
 import { useAuth } from "../../contexts/AuthContext";
 import ShadowHeader from "@/components/common/ShadowHeader";
 import { GradientLine } from "@/components/common/GradientLine";
-
-// Dropdown Component
-interface DropdownProps {
-  visible: boolean;
-  onClose: () => void;
-  options: Array<{ id: number | string; name: string }>;
-  onSelect: (option: { id: number | string; name: string }) => void;
-  selectedValue: string;
-  title: string;
-  topOffset?: number; // pixel offset from anchor top
-  width?: number; // match anchor width
-  headerText?: string; // optional header like the field itself
-}
-
-const Dropdown: React.FC<DropdownProps> = ({
-  visible,
-  onClose,
-  options,
-  onSelect,
-  selectedValue,
-  title,
-  topOffset = 0,
-  width,
-  headerText,
-}) => {
-  if (!visible) return null;
-
-  return (
-    <View
-      style={{
-        position: "absolute",
-        left: 0,
-        top: 34,
-        width: width || undefined,
-        zIndex: 1000,
-        elevation: 1000,
-      }}
-    >
-      <View
-        className="bg-[#374862] overflow-hidden shadow-lg"
-        style={{
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
-          borderBottomLeftRadius: 16,
-          borderBottomRightRadius: 16,
-        }}
-      >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ maxHeight: 200 }}
-        >
-          {headerText ? (
-            <View className="px-3 py-2 border-b border-white/10 flex-row items-center">
-              <Text
-                className={`text-white ${title === "Protocols" ? "text-left" : "text-center"}`}
-                style={{ fontSize: TEXT_SIZES.sm, flex: 1 }}
-              >
-                {headerText}
-              </Text>
-              <AntDesign name="up" size={12} color="white" />
-            </View>
-          ) : null}
-          {options
-            .filter(
-              (o) =>
-                o.name !== selectedValue &&
-                (!headerText || o.name !== headerText)
-            )
-            .map((option) => (
-              <TouchableOpacity
-                key={option.id}
-                className="px-3 py-2 border-b border-white/10 last:border-b-0"
-                onPress={() => {
-                  onSelect(option);
-                  onClose();
-                }}
-              >
-                <Text
-                  className={`text-white ${title === "Protocols" ? "text-left" : "text-center"}`}
-                  style={{ fontSize: TEXT_SIZES.sm }}
-                >
-                  {option.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-        </ScrollView>
-      </View>
-    </View>
-  );
-};
+import Dropdown from "./helper/DropDown";
+import { capitalizeFirst } from "@/utils/capitalizeFirst";
 
 const StatisticsDashboardScreen: React.FC = () => {
-  const { setTabBackgroundColor } = useAuth();
-
-  // set tab background color when screen focuses
-  useFocusEffect(
-    useCallback(() => {
-      // Set color when screen focuses
-      setTabBackgroundColor("#14181B");
-    }, [setTabBackgroundColor])
-  );
-
   const navigation: any = useNavigation();
   // Define months array first
   const months = [
@@ -490,41 +392,52 @@ const StatisticsDashboardScreen: React.FC = () => {
   return (
     <LinearGradient
       colors={["#243551", "#171D27", "#14181B"]}
-      // start={{ x: 0.5, y: 1 }}
-      // end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
       <SafeAreaView className="h-screen">
         <AppStatusBar barStyle="light-content" />
-        <View className="flex-1 px-4 pt-3">
-          {/* Header */}
+
+        {/* Header */}
+        <ShadowHeader
+          title="Session Details"
+          onPress={() => navigation.goBack()}
+        />
+
+        <View className="flex-1 px-4 -mt-3">
           <View className="mb-1">
-            {/* Top Row - Back Arrow and Title */}
-            
-            <ShadowHeader
-              title="Session Details"
-              onPress={() => navigation.goBack()}
-            />
             {/* Filter Row */}
             <View className="flex-row flex-wrap items-center relative">
-              <TouchableOpacity className="px-4 py-2 mr-3 bg-[#374862] items-center justify-center rounded-xl border border-[#8BAFCE]">
+              <TouchableOpacity
+                className="mr-3 items-center justify-center"
+                style={{
+                  backgroundColor: "rgba(139, 175, 206, 0.3)",
+                  borderWidth: 1,
+                  borderColor: "#8BAFCE",
+                  borderRadius: 8,
+                  paddingHorizontal: 9,
+                  paddingVertical: 5.5,
+                }}
+              >
                 <AntDesign
                   name="filter"
-                  size={RFValue(18)}
+                  size={16}
                   color="#8BAFCE"
-                  style={{ fontSize: TEXT_SIZES.md,width: RFValue(16),height: RFValue(14) }}
+                  style={{
+                    fontSize: 14,
+                  }}
                 />
               </TouchableOpacity>
 
               {/* Protocol Filter */}
               <View className="relative mr-3 mb-3" onLayout={(e) => {}}>
                 <TouchableOpacity
-                  className="bg-[#374862] px-3 py-2 flex-row items-center"
+                  className="bg-[#374862] px-4 py-[6px] flex-row items-center justify-between"
                   style={{
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                     borderBottomLeftRadius: showProtocolDropdown ? 0 : 16,
                     borderBottomRightRadius: showProtocolDropdown ? 0 : 16,
+                    minWidth: 129,
                   }}
                   onLayout={(e) => {
                     // store width for dropdown to match
@@ -535,15 +448,14 @@ const StatisticsDashboardScreen: React.FC = () => {
                 >
                   <Text
                     className="text-white mr-1"
-                    style={{ fontSize: TEXT_SIZES.sm, fontFamily: "InterRegular" }}
+                    style={{ fontSize: 14, fontFamily: "InterRegular" }}
                   >
-                    {selectedProtocol}
+                    {capitalizeFirst(selectedProtocol)}
                   </Text>
                   <AntDesign
                     name={showProtocolDropdown ? "up" : "down"}
                     size={12}
                     color="white"
-                    style={{ fontSize: TEXT_SIZES.sm, zIndex: 1001 }}
                   />
                 </TouchableOpacity>
                 <Dropdown
@@ -558,25 +470,20 @@ const StatisticsDashboardScreen: React.FC = () => {
                   }}
                   selectedValue={selectedProtocol}
                   title="Protocols"
-                  topOffset={40}
                   width={protocolWidth}
-                  headerText={
-                    selectedProtocol !== "All Protocols"
-                      ? selectedProtocol
-                      : undefined
-                  }
                 />
               </View>
 
               {/* ATA Level Filter */}
               <View className="relative mr-3 mb-3">
                 <TouchableOpacity
-                  className="bg-[#374862] px-3 py-2 flex-row items-center"
+                  className="bg-[#374862] px-4 py-[6px] flex-row items-center justify-between"
                   style={{
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                     borderBottomLeftRadius: showAtaDropdown ? 0 : 16,
                     borderBottomRightRadius: showAtaDropdown ? 0 : 16,
+                    minWidth: 129,
                   }}
                   onLayout={(e) => {
                     // @ts-ignore
@@ -586,15 +493,14 @@ const StatisticsDashboardScreen: React.FC = () => {
                 >
                   <Text
                     className="text-white mr-1"
-                    style={{ fontSize: TEXT_SIZES.sm, fontFamily: "InterRegular" }}
+                    style={{ fontSize: 14, fontFamily: "InterRegular" }}
                   >
-                    {selectedAta}
+                    {capitalizeFirst(selectedAta)}
                   </Text>
                   <AntDesign
                     name={showAtaDropdown ? "up" : "down"}
                     size={12}
                     color="white"
-                    style={{ fontSize: TEXT_SIZES.sm, zIndex: 1001 }}
                   />
                 </TouchableOpacity>
                 <Dropdown
@@ -609,23 +515,20 @@ const StatisticsDashboardScreen: React.FC = () => {
                   }}
                   selectedValue={selectedAta}
                   title="ATA Level"
-                  topOffset={40}
                   width={ataWidth}
-                  headerText={
-                    selectedAta !== "All ATA Levels" ? selectedAta : undefined
-                  }
                 />
               </View>
 
               {/* Duration Filter */}
               <View className="relative mr-3 mb-3">
                 <TouchableOpacity
-                  className="bg-[#374862] px-3 py-2 flex-row items-center"
+                  className="bg-[#374862] px-4 py-[6px] flex-row items-center justify-between"
                   style={{
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16,
                     borderBottomLeftRadius: showDurationDropdown ? 0 : 16,
                     borderBottomRightRadius: showDurationDropdown ? 0 : 16,
+                    minWidth: 129,
                   }}
                   onPress={() => {
                     console.log(
@@ -641,15 +544,14 @@ const StatisticsDashboardScreen: React.FC = () => {
                 >
                   <Text
                     className="text-white mr-1"
-                    style={{ fontSize: TEXT_SIZES.sm, fontFamily: "InterRegular" }}
+                    style={{ fontSize: 14, fontFamily: "InterRegular" }}
                   >
-                    {selectedDuration}
+                    {capitalizeFirst(selectedDuration)}
                   </Text>
                   <AntDesign
                     name={showDurationDropdown ? "up" : "down"}
                     size={12}
                     color="white"
-                    style={{ fontSize: TEXT_SIZES.sm, zIndex: 1001 }}
                   />
                 </TouchableOpacity>
                 <Dropdown
@@ -661,18 +563,12 @@ const StatisticsDashboardScreen: React.FC = () => {
                   }}
                   selectedValue={selectedDuration}
                   title="Duration"
-                  topOffset={40}
                   width={durationWidth}
-                  headerText={
-                    selectedDuration !== "All Durations"
-                      ? selectedDuration
-                      : undefined
-                  }
                 />
               </View>
 
               <TouchableOpacity
-                className="bg-[#374862] rounded-full px-6  py-2 mr-3 mb-3"
+                className="bg-[#374862] rounded-full px-4  py-[6px] mr-3 mb-3"
                 onPress={() => {
                   setSelectedProtocol("All Protocols");
                   setSelectedProtocolId(undefined);
@@ -686,7 +582,7 @@ const StatisticsDashboardScreen: React.FC = () => {
               >
                 <Text
                   className="text-white"
-                  style={{ fontSize: TEXT_SIZES.sm, fontFamily: "InterRegular" }}
+                  style={{ fontSize: 14, fontFamily: "InterRegular" }}
                 >
                   Reset Filter
                 </Text>
@@ -694,31 +590,25 @@ const StatisticsDashboardScreen: React.FC = () => {
             </View>
           </View>
 
-          {/* Touchable overlay to close dropdowns */}
-          {(showProtocolDropdown ||
-            showAtaDropdown ||
-            showDurationDropdown) && (
-            <TouchableOpacity
-              className="absolute inset-0 z-30"
-              onPress={() => {
-                setShowProtocolDropdown(false);
-                setShowAtaDropdown(false);
-                setShowDurationDropdown(false);
-              }}
-            />
-          )}
-
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 80 }}
+          >
             {/* Session Details Section */}
             <Text
-              className="text-white mb-2"
-              style={{ fontSize: TEXT_SIZES.md ,fontFamily: "InterRegular" }}
+              className="mb-3"
+              style={{
+                fontSize: 16,
+                fontFamily: "InterRegular",
+                color: "#DDE2E5",
+              }}
             >
               Choose a date to view session details
             </Text>
-            <View className="  bg-black rounded-[32px]  p-6 ">
-              {/* Calendar */}
-              <View>
+
+            {/* Calendar */}
+            <View className="bg-[#090A0B] rounded-[32px] p-[16px]">
+              <>
                 {/* Month/Year Navigation */}
                 <View className=" flex-row items-center justify-between mb-4">
                   <View className="flex-row items-center justify-between mb-4">
@@ -774,6 +664,7 @@ const StatisticsDashboardScreen: React.FC = () => {
                     </TouchableOpacity>
                   </View>
                 </View>
+
                 {/* Days of Week */}
                 <View className="flex-row justify-between ">
                   {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
@@ -794,7 +685,8 @@ const StatisticsDashboardScreen: React.FC = () => {
                 </View>
                 {/* Calendar Grid */}
                 <View className="w-full">{renderCalendar()}</View>
-              </View>
+              </>
+
               {/* View Session Details Button */}
               <View
                 className={`flex-full w-full items-center justify-between rounded-full mt-8 ${
@@ -818,25 +710,33 @@ const StatisticsDashboardScreen: React.FC = () => {
                 >
                   <Text
                     className={`text-gray-600  text-center ${selectedDateString ? "text-white" : "text-gray-600"}`}
-                    style={{ fontSize: TEXT_SIZES.md, fontFamily: "InterRegular" }}
+                    style={{
+                      fontSize: TEXT_SIZES.md,
+                      fontFamily: "InterRegular",
+                    }}
                   >
-                    {selectedDateString ? "View Session Details" : "Select a Date First"}
+                    {selectedDateString
+                      ? "View Session Details"
+                      : "Select a Date First"}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
             {/* Charts Section */}
 
+            <View style={{ marginVertical: RFValue(14) }}>
+              <GradientLine />
+            </View>
 
-          <View style={{ marginVertical: RFValue(14) }}>
-          <GradientLine />
-          </View>
             {/* Sessions Chart with Week/Month Toggle */}
             <View className="bg-[#090A0B] rounded-[12px] p-4 mb-6 w-full">
               <View className="flex-row items-center justify-between mb-4">
                 <Text
                   className="text-white "
-                  style={{ fontSize: TEXT_SIZES.md ,fontFamily: "InterRegular" }}
+                  style={{
+                    fontSize: TEXT_SIZES.md,
+                    fontFamily: "InterRegular",
+                  }}
                 >
                   Sessions
                 </Text>
@@ -913,12 +813,16 @@ const StatisticsDashboardScreen: React.FC = () => {
                 />
               </View>
             </View>
+
             {/* ATA History Line Chart */}
             <View className="bg-[#090A0B] rounded-[12px] py-4 mb-6 px-4">
               <View className="flex-row items-center justify-between mb-4 px-3">
                 <Text
                   className="text-white "
-                  style={{ fontSize: TEXT_SIZES.md ,fontFamily: "InterRegular" }}
+                  style={{
+                    fontSize: TEXT_SIZES.md,
+                    fontFamily: "InterRegular",
+                  }}
                 >
                   ATA History
                 </Text>

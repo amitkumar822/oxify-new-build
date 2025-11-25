@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,18 +8,14 @@ import {
 } from "react-native";
 // @ts-ignore
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { RFValue } from "react-native-responsive-fontsize";
-import { useAuth } from "../../contexts/AuthContext";
 
 const ICON_SIZE = RFValue(20);
 const CENTER_BUTTON_SIZE = RFValue(80);
 
 const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
-    const insets = useSafeAreaInsets();
-    const { tabBackgroundColor } = useAuth();
 
   const handlePress = (routeName: string, index: number) => {
     if (routeName === "StartSessionTab") {
@@ -34,7 +30,11 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, navigation }) => {
   return (
     <View
       style={{
-        backgroundColor: tabBackgroundColor || "#243551", // Fallback to default color
+        backgroundColor: 'transparent', // Transparent background
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
       }}
     >
       <View>

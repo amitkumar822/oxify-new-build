@@ -32,7 +32,6 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
   onClose,
   onSave,
 }) => {
-
   // State for reminder settings
   const [reminderEnabled, setReminderEnabled] = useState(true);
   const [timeOfDay, setTimeOfDay] = useState<"morning" | "evening">("morning");
@@ -52,6 +51,9 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
   // ScrollView refs for time pickers
   const hourScrollRef = useRef<ScrollView>(null);
   const minuteScrollRef = useRef<ScrollView>(null);
+
+  // Track if scroll positions have been initialized
+  const isInitialized = useRef(false);
 
   const rawHours = Array.from({ length: 12 }, (_, i) => i + 1);
   const rawMinutes = Array.from({ length: 60 }, (_, i) => i);
@@ -109,23 +111,14 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
   // Load saved reminder data when component becomes visible
   useEffect(() => {
     if (visible) {
+      isInitialized.current = false;
       loadSavedReminderData();
+    } else {
+      isInitialized.current = false;
     }
   }, [visible]);
 
-  // Initialize scroll positions when component mounts or values change
-  useEffect(() => {
-    if (visible) {
-      setTimeout(() => {
-        // Position = middle copy + selected index
-        const hourStartIndex = 12 + (selectedHour - 1);
-        const minuteStartIndex = 60 + selectedMinute;
-
-        snapToItem(hourScrollRef, hourStartIndex);
-        snapToItem(minuteScrollRef, minuteStartIndex);
-      }, 120);
-    }
-  }, [visible, selectedHour, selectedMinute]);
+  // Note: Scroll initialization is now handled in loadSavedReminderData
 
   // Convert 12-hour time to 24-hour format for notifications
   const convertTo24Hour = (
@@ -154,6 +147,15 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
         setSelectedHour(savedData.hour);
         setSelectedMinute(savedData.minute);
         setPeriod(savedData.period);
+
+        // Initialize scroll positions after data is loaded
+        setTimeout(() => {
+          const hourStartIndex = 12 + (savedData.hour - 1);
+          const minuteStartIndex = 60 + savedData.minute;
+          snapToItem(hourScrollRef, hourStartIndex, false);
+          snapToItem(minuteScrollRef, minuteStartIndex, false);
+          isInitialized.current = true;
+        }, 150);
       } else {
         // Set default values if no saved data
         setReminderEnabled(true);
@@ -161,6 +163,15 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
         setSelectedHour(7);
         setSelectedMinute(0);
         setPeriod("AM");
+
+        // Initialize scroll positions with defaults
+        setTimeout(() => {
+          const hourStartIndex = 12 + (7 - 1);
+          const minuteStartIndex = 60 + 0;
+          snapToItem(hourScrollRef, hourStartIndex, false);
+          snapToItem(minuteScrollRef, minuteStartIndex, false);
+          isInitialized.current = true;
+        }, 150);
       }
     } catch (error) {
       // Set default values on error
@@ -169,6 +180,15 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
       setSelectedHour(7);
       setSelectedMinute(0);
       setPeriod("AM");
+
+      // Initialize scroll positions with defaults
+      setTimeout(() => {
+        const hourStartIndex = 12 + (7 - 1);
+        const minuteStartIndex = 60 + 0;
+        snapToItem(hourScrollRef, hourStartIndex, false);
+        snapToItem(minuteScrollRef, minuteStartIndex, false);
+        isInitialized.current = true;
+      }, 150);
     }
   };
 
@@ -249,42 +269,71 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
   // Helper function to snap to item
   const snapToItem = (
     scrollViewRef: React.RefObject<ScrollView | null>,
-    index: number
+    index: number,
+    animated: boolean = true
   ) => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({
         y: index * ITEM_HEIGHT,
-        animated: true,
+        animated,
       });
     }
   };
 
-  // Handle hour selection
+  // Handle hour selection (on tap)
   const handleHourChange = (hour: number) => {
+    const hourStartIndex = 12 + (hour - 1);
+    snapToItem(hourScrollRef, hourStartIndex);
     setSelectedHour(hour);
-    snapToItem(hourScrollRef, hour - 1);
   };
 
-  // Handle minute selection
+  // Handle minute selection (on tap)
   const handleMinuteChange = (minute: number) => {
+    const minuteStartIndex = 60 + minute;
+    snapToItem(minuteScrollRef, minuteStartIndex);
     setSelectedMinute(minute);
-    snapToItem(minuteScrollRef, minute);
   };
 
   // Handle scroll end for hours
   const handleHourScrollEnd = (event: any) => {
+    if (!isInitialized.current) return;
+
     const y = event.nativeEvent.contentOffset.y;
     const index = Math.round(y / ITEM_HEIGHT);
     const hour = rawHours[index % 12];
+
+    // Update state without triggering re-scroll
     setSelectedHour(hour);
+
+    // Adjust scroll position to middle section for infinite scroll (without animation to prevent loop)
+    const currentSection = Math.floor(index / 12);
+    if (currentSection !== 1) {
+      const newIndex = 12 + (hour - 1);
+      setTimeout(() => {
+        snapToItem(hourScrollRef, newIndex, false);
+      }, 50);
+    }
   };
 
   // Handle scroll end for minutes
   const handleMinuteScrollEnd = (event: any) => {
+    if (!isInitialized.current) return;
+
     const y = event.nativeEvent.contentOffset.y;
     const index = Math.round(y / ITEM_HEIGHT);
     const minute = rawMinutes[index % 60];
+
+    // Update state without triggering re-scroll
     setSelectedMinute(minute);
+
+    // Adjust scroll position to middle section for infinite scroll (without animation to prevent loop)
+    const currentSection = Math.floor(index / 60);
+    if (currentSection !== 1) {
+      const newIndex = 60 + minute;
+      setTimeout(() => {
+        snapToItem(minuteScrollRef, newIndex, false);
+      }, 50);
+    }
   };
 
   // Smooth tab change animation

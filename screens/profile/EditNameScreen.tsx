@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Keyboard,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -16,8 +17,6 @@ import { useUpdateProfile, useProfile } from "../../hooks/useProfile";
 import { ProfileUpdateData } from "../../api/profile";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppStatusBar } from "../../helpers/AppStatusBar";
-import { TEXT_SIZES } from "@/constants/textSizes";
-import { Theme } from "@/constants";
 
 const EditNameScreen: React.FC = () => {
   const navigation: any = useNavigation();
@@ -26,25 +25,41 @@ const EditNameScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFirstNameFocused, setIsFirstNameFocused] = useState(false);
   const [isLastNameFocused, setIsLastNameFocused] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const updateProfileMutation = useUpdateProfile();
-  const { data: profileData }: { data: any} = useProfile();
+  const { data: profileData }: { data: any } = useProfile();
 
   // Set initial values from profile data
   useEffect(() => {
-
     if (profileData?.data?.data) {
       const data = profileData.data.data as any;
 
       setFirstName(data.first_name || "");
       setLastName(data.last_name || "");
-    } else {
-      // console.log("🔍 EditNameScreen - No profile data available");
     }
   }, [profileData]);
 
-  // Debug current state values
-  // console.log("🔍 EditNameScreen - Current state:", { firstName, lastName });
+  // Handle keyboard show/hide
+  useEffect(() => {
+    const keyboardWillShowListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+      }
+    );
+    const keyboardWillHideListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardWillShowListener.remove();
+      keyboardWillHideListener.remove();
+    };
+  }, []);
 
   const handleSave = async () => {
     if (!firstName.trim() || !lastName.trim()) {
@@ -75,13 +90,7 @@ const EditNameScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={[
-        Theme.backgroundGradient.start,
-        Theme.backgroundGradient.middle,
-        Theme.backgroundGradient.end,
-      ]}
-      start={{ x: 0.5, y: 1 }}
-      end={{ x: 0.5, y: 0 }}
+      colors={["#243551", "#171D27", "#14181B"]}
       style={styles.gradient}
     >
       <SafeAreaView className="flex-1">
@@ -89,22 +98,27 @@ const EditNameScreen: React.FC = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           className="flex-1"
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         >
-          <View className="flex-1 px-4 py-4">
+          <View
+            className="flex-1 px-4 py-4"
+            style={{
+              paddingBottom: keyboardHeight > 0 ? keyboardHeight + 10 : 120,
+            }}
+          >
             {/* Header */}
             <View className="flex-row items-center mb-6">
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
                 className=""
               >
-                <AntDesign name="left" size={24} color="white" />
+                <AntDesign name="left" size={22} color="white" />
               </TouchableOpacity>
               <Text
                 className="text-white  text-center flex-1 mr-6"
                 style={{
-                  fontFamily: "Inter",
-                  fontSize: TEXT_SIZES.lg,
-                  fontWeight: "600",
+                  fontFamily: "InterSemiBold",
+                  fontSize: 18,
                 }}
               >
                 Edit Name
@@ -114,17 +128,17 @@ const EditNameScreen: React.FC = () => {
             {/* Form */}
             <View className="flex-1">
               <Text
-                className="text-white mb-2"
+                className=" mb-2"
                 style={{
-                  fontFamily: "Inter",
-                  fontSize: TEXT_SIZES.md,
-                  fontWeight: "500",
+                  fontFamily: "InterMedium",
+                  fontSize: 16,
+                  color: "#DDE2E5",
                 }}
               >
                 Full name
               </Text>
 
-              <View className="mb-4">
+              <View className="mb-[10px]">
                 <View
                   className="bg-white rounded-[14px] px-4 mb-2"
                   style={{
@@ -137,15 +151,18 @@ const EditNameScreen: React.FC = () => {
                     onChangeText={setFirstName}
                     onFocus={() => setIsFirstNameFocused(true)}
                     onBlur={() => setIsFirstNameFocused(false)}
-                    className="text-black font-medium"
-                    style={{ fontSize: TEXT_SIZES.sm, paddingVertical: 14 }}
+                    style={{
+                      fontSize: 16,
+                      paddingVertical: 14,
+                      fontFamily: "InterMedium",
+                    }}
                     placeholder="First Name"
                     placeholderTextColor="#9CA3AF"
                   />
                 </View>
               </View>
 
-              <View className="mb-4">
+              <>
                 <View
                   className="bg-white rounded-[14px] px-4"
                   style={{
@@ -158,33 +175,37 @@ const EditNameScreen: React.FC = () => {
                     onChangeText={setLastName}
                     onFocus={() => setIsLastNameFocused(true)}
                     onBlur={() => setIsLastNameFocused(false)}
-                    className="text-black font-medium"
-                    style={{ fontSize: TEXT_SIZES.sm, paddingVertical: 14 }}
+                    style={{
+                      fontSize: 16,
+                      paddingVertical: 14,
+                      fontFamily: "InterMedium",
+                    }}
                     placeholder="Last Name"
                     placeholderTextColor="#9CA3AF"
                   />
                 </View>
-              </View>
+              </>
             </View>
 
             {/* Update Button - Positioned at bottom */}
-            <View className="pb-6">
-              <TouchableOpacity
-                className={`rounded-[36px]  items-center h-[54px]${
-                  isLoading ? "opacity-50" : ""
-                }`}
-                style={{ backgroundColor: "#6189AD",paddingVertical: 14 }}
-                onPress={handleSave}
-                disabled={isLoading}
+            <TouchableOpacity
+              className={`rounded-[36px]  items-center ${
+                isLoading ? "opacity-50" : ""
+              }`}
+              style={{ backgroundColor: "#6189AD", paddingVertical: 14 }}
+              onPress={handleSave}
+              disabled={isLoading}
+            >
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: "InterSemiBold",
+                  color: "#DDE2E5",
+                }}
               >
-                <Text
-                  className="text-white font-semibold"
-                  style={{ fontSize: TEXT_SIZES.sm }}
-                >
-                  {isLoading ? "Updating..." : "Update"}
-                </Text>
-              </TouchableOpacity>
-            </View>
+                {isLoading ? "Updating..." : "Update"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

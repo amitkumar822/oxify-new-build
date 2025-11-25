@@ -72,15 +72,6 @@ const DashboardScreen: React.FC = () => {
   const lastName = profileData?.last_name || "";
   const displayName = `${firstName} ${lastName}`.trim() || "User";
 
-  const { setTabBackgroundColor } = useAuth();
-  // set tab background color when screen focuses
-  useFocusEffect(
-    useCallback(() => {
-      // Set color when screen focuses
-      setTabBackgroundColor("#243551");
-    }, [setTabBackgroundColor])
-  );
-
   return (
     <LinearGradient
       colors={[

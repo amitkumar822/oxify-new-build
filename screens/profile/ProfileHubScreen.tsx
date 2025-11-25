@@ -34,7 +34,7 @@ const { height } = Dimensions.get("window");
 
 const ProfileHubScreen: React.FC = () => {
   const navigation: any = useNavigation();
-  const { logout, setTabBackgroundColor } = useAuth();
+  const { logout } = useAuth();
   const { data: profileData, isLoading: isProfileLoading } = useProfile();
   const updateProfileMutation = useUpdateProfile();
 
@@ -287,14 +287,6 @@ const ProfileHubScreen: React.FC = () => {
     );
   };
 
-  // set tab background color when screen focuses
-  useFocusEffect(
-    useCallback(() => {
-      // Set color when screen focuses
-      setTabBackgroundColor("#14181B");
-    }, [setTabBackgroundColor])
-  );
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -310,9 +302,10 @@ const ProfileHubScreen: React.FC = () => {
       style={styles.gradient}
     >
       <AppStatusBar barStyle="light-content" />
+
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 30 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         <SafeAreaView className="flex-1 px-4">

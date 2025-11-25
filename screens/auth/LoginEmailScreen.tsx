@@ -43,7 +43,7 @@ const LoginEmailScreen: FC = () => {
     }).start();
   }, []);
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("adityadesk99@gmail.com");
   const [error, setError] = useState<String>("");
 
   // login loading state management

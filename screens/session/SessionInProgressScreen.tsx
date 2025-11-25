@@ -19,6 +19,8 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFValue } from "react-native-responsive-fontsize";
 import { AppStatusBar } from "@/helpers/AppStatusBar";
+import { useAudioPlayer } from 'expo-audio';
+const alarmClockSound = require('@/assets/audio/alarm_clock.mp3');
 
 interface RouteParams {
   sessionData?: {
@@ -39,6 +41,8 @@ const SessionInProgressScreen: React.FC = () => {
   const route = useRoute();
   const { sessionData } = (route.params as RouteParams) || {};
 
+  const player = useAudioPlayer(alarmClockSound);
+
   // If sessionData not provided → default 1 min
   const defaultMinutes = sessionData?.durationMinutes ?? 1;
   const defaultSeconds = sessionData?.durationSeconds ?? 0;
@@ -53,7 +57,6 @@ const SessionInProgressScreen: React.FC = () => {
     defaultMinutes * 60 + defaultSeconds
   );
   const [smoothProgress, setSmoothProgress] = useState(100);
-
   // progress % - starts at 100% and decreases to 0% as time progresses
   // When finished, ensure progress is exactly 0
   const progressPercentage = isFinished
@@ -73,6 +76,7 @@ const SessionInProgressScreen: React.FC = () => {
             setIsPaused(false);
             setIsFinished(true);
             setSmoothProgress(0); // Set smooth progress to exactly 0 wh    sen finished
+            player.play();
             return 0;
           }
           return prev - 1;
@@ -143,6 +147,7 @@ const SessionInProgressScreen: React.FC = () => {
   const progressColor = "#2398F7";
 
   const handleFinishSession = () => {
+    player.pause();
     navigation.navigate(SCREEN_NAMES.SESSION_COMPLETED, {
       sessionData,
     });

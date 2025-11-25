@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ScreenContainer, SectionTitle } from "../../components/common";
+import { SectionTitle } from "../../components/common";
 import ChangePasswordScreen from "../profile/ChangePasswordScreen";
 import { Theme } from "@/constants";
 

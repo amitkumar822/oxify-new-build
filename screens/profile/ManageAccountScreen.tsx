@@ -77,11 +77,11 @@ const ManageAccountScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView className="flex-1">
+      <SafeAreaView>
         <AppStatusBar barStyle="light-content" />
         <ScrollView
-          className=" px-4 py-4"
-          contentContainerStyle={{ paddingBottom: 30 }}
+          className="px-4 py-4 h-screen"
+          contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
         >
           {loadFailed && (
@@ -207,7 +207,6 @@ const ProfileRow = ({
   iconDisabled?: boolean;
 }) => (
   <TouchableOpacity
-    // className={`flex-row justify-between items-center ps-5`}
     className={`flex-row items-center ms-4 `}
     onPress={onPress}
     disabled={!onPress}

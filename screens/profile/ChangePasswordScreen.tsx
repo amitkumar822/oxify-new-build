@@ -95,7 +95,7 @@ const ChangePasswordScreen: React.FC = () => {
     >
       <SafeAreaView className="flex-1">
         <AppStatusBar barStyle="light-content" />
-        <View className="flex-1 px-4 py-4">
+        <View className="flex-1 px-4 py-4 pb-[100px]">
           {/* Header */}
           <View className="relative flex-row items-center justify-center mb-6">
             {/* Back Button */}

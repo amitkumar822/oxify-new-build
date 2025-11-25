@@ -1,10 +1,9 @@
 import React from "react";
 import {
-  ScreenContainer,
   SectionTitle,
   ListItem,
 } from "../../components/common";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Theme } from "@/constants";
 
