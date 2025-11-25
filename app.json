@@ -18,7 +18,9 @@
       "bundleIdentifier": "com.amitkumarsingh.oxify",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"],
+        "NSLocalNotificationUsageDescription": "This app uses notifications to remind you to start your session."
       }
     },
     "android": {
@@ -29,7 +31,13 @@
       "edgeToEdgeEnabled": true,
       "package": "com.amitkumarsingh.oxify",
       "jsEngine": "hermes",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true,
+      "permissions": [
+        "VIBRATE",
+        "POST_NOTIFICATIONS",
+        "SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -44,9 +52,6 @@
       "expo-apple-authentication",
       "expo-font",
       "expo-audio"
-      // {
-      //   "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-      // }
     ],
     "extra": {
       "name": "Oxify",

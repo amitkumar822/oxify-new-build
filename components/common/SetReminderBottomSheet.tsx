@@ -120,6 +120,20 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
 
   // Note: Scroll initialization is now handled in loadSavedReminderData
 
+  // Animate tab indicator whenever timeOfDay changes
+  useEffect(() => {
+    if (!tabLayout) return;
+
+    const toValue = timeOfDay === "morning" ? 0 : tabLayout.width / 2;
+
+    Animated.timing(tabTranslate, {
+      toValue,
+      duration: 350,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [timeOfDay, tabLayout, tabTranslate]);
+
   // Convert 12-hour time to 24-hour format for notifications
   const convertTo24Hour = (
     hour: number,
@@ -146,7 +160,9 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
         setTimeOfDay(savedData.timeOfDay);
         setSelectedHour(savedData.hour);
         setSelectedMinute(savedData.minute);
-        setPeriod(savedData.period);
+        // Ensure period is always consistent with timeOfDay,
+        // even if older saved data had a mismatched period.
+        setPeriod(savedData.timeOfDay === "morning" ? "AM" : "PM");
 
         // Initialize scroll positions after data is loaded
         setTimeout(() => {
@@ -230,6 +246,8 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
       period,
     };
 
+    console.log("reminderData", reminderData);
+
     try {
       await storeReminderData(reminderData);
 
@@ -237,6 +255,7 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
         try {
           await NotificationService.cancelAllNotifications();
           const time24 = convertTo24Hour(selectedHour, selectedMinute, period);
+          console.log("time24", time24);
           await NotificationService.scheduleDailyReminder(
             time24.hour,
             time24.minute,
@@ -339,25 +358,14 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
   // Smooth tab change animation
   const handleTimeOfDayChange = (newTimeOfDay: "morning" | "evening") => {
     setTimeOfDay(newTimeOfDay);
-
-    if (tabLayout) {
-      const toValue = newTimeOfDay === "morning" ? 0 : tabLayout.width / 2;
-      Animated.timing(tabTranslate, {
-        toValue,
-        duration: 350,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }).start();
-    }
+    // Keep period (AM/PM) in sync with selected timeOfDay
+    setPeriod(newTimeOfDay === "morning" ? "AM" : "PM");
   };
 
   const onTabsLayout = (e: LayoutChangeEvent) => {
     const layout = e.nativeEvent.layout;
     if (!tabLayout) {
       setTabLayout(layout);
-      // Initialize position once
-      const initValue = timeOfDay === "morning" ? 0 : layout.width / 2;
-      tabTranslate.setValue(initValue);
     }
   };
 
@@ -650,7 +658,7 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
                               fontWeight: "500",
                             }}
                           >
-                            {timeOfDay === "morning" ? "AM" : "PM"}
+                            {period}
                           </Text>
                         </View>
                       </View>

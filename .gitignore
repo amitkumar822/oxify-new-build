@@ -6,8 +6,12 @@ dist/
 
 
 android/
+android/*
 ios/
 
 .idea/
 .vscode/
 Archive.zip
+
+oxify-19537-firebase-adminsdk-fbsvc-08732e43f5.json
+google-services.json
