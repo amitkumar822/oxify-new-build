@@ -55,27 +55,27 @@ export const scheduleDailyReminder = async (
 //   console.log(`Daily reminder scheduled with ID: ${dailyId} at ${hour24}:${min24.toString().padStart(2, '0')}`);
 
   // For testing: if notification is within 5 minutes, also schedule an immediate test notification
-  if (minutesUntilNotification <= 5) {
-    const secondsUntilNotification = minutesUntilNotification * 60;
-    console.log(`Also scheduling immediate test notification in ${secondsUntilNotification} seconds`);
+  // if (minutesUntilNotification <= 5) {
+  //   const secondsUntilNotification = minutesUntilNotification * 60;
+  //   console.log(`Also scheduling immediate test notification in ${secondsUntilNotification} seconds`);
     
-    const testTrigger: Notifications.TimeIntervalTriggerInput = {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: secondsUntilNotification,
-    };
+  //   const testTrigger: Notifications.TimeIntervalTriggerInput = {
+  //     type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+  //     seconds: secondsUntilNotification,
+  //   };
 
-    const testId = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: title,
-        body: message,
-        sound: true,
-      },
-      trigger: testTrigger,
-    });
+  //   const testId = await Notifications.scheduleNotificationAsync({
+  //     content: {
+  //       title: title,
+  //       body: message,
+  //       sound: true,
+  //     },
+  //     trigger: testTrigger,
+  //   });
 
-    // console.log(`Test notification scheduled with ID: ${testId}`);
-    return testId; // Return test ID for immediate feedback
-  }
+  //   // console.log(`Test notification scheduled with ID: ${testId}`);
+  //   return testId; // Return test ID for immediate feedback
+  // }
 
   return dailyId;
 };
