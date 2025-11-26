@@ -8,7 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./config/queryClient";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AppStatusBar } from "./helpers/AppStatusBar";
-import { Alert, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import ErrorBoundary from "./utils/ErrorBoundary";
 import NetworkProvider from "./utils/NetworkProvider";
 import { toastConfig } from "./config/toast";
@@ -41,6 +41,19 @@ import {
   Poppins_600SemiBold,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+import { requestNotificationPermission } from "./utils/reminderNotification/TestNotification";
+import * as Notifications from "expo-notifications";
+
+// Configure notification behavior
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 // Global Text & TextInput Configuration - using a safer approach
 // Disable default system font scaling globally
@@ -64,6 +77,13 @@ try {
 }
 
 const App: React.FC = () => {
+
+  // Test notification permission
+  useEffect(() => {
+    // Call permission function once
+    requestNotificationPermission();
+  }, []);
+  
   const [fontsLoaded] = useFonts({
     // Inter
     InterRegular: Inter_400Regular,
@@ -87,6 +107,8 @@ const App: React.FC = () => {
   });
 
   if (!fontsLoaded) return null;
+
+
 
   return (
     <ErrorBoundary>

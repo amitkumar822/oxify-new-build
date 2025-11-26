@@ -18,8 +18,8 @@ import {
   storeReminderData,
   ReminderData,
 } from "@/utils/tokenManager";
-import NotificationService from "@/utils/notificationService";
 import TabSwitch from "./helper/TabSwitch";
+import { scheduleDailyReminder } from "@/utils/reminderNotification/scheduleDailyReminder";
 
 interface SetReminderBottomSheetProps {
   visible: boolean;
@@ -134,23 +134,6 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
     }).start();
   }, [timeOfDay, tabLayout, tabTranslate]);
 
-  // Convert 12-hour time to 24-hour format for notifications
-  const convertTo24Hour = (
-    hour: number,
-    minute: number,
-    period: "AM" | "PM"
-  ) => {
-    let hour24 = hour;
-
-    if (period === "AM" && hour === 12) {
-      hour24 = 0;
-    } else if (period === "PM" && hour !== 12) {
-      hour24 = hour + 12;
-    }
-
-    return { hour: hour24, minute };
-  };
-
   // Load saved reminder data from local storage
   const loadSavedReminderData = async () => {
     try {
@@ -246,29 +229,20 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
       period,
     };
 
-    console.log("reminderData", reminderData);
-
     try {
       await storeReminderData(reminderData);
 
       if (reminderEnabled) {
         try {
-          await NotificationService.cancelAllNotifications();
-          const time24 = convertTo24Hour(selectedHour, selectedMinute, period);
-          console.log("time24", time24);
-          await NotificationService.scheduleDailyReminder(
-            time24.hour,
-            time24.minute,
-            timeOfDay
+          await scheduleDailyReminder(
+            selectedHour,
+            selectedMinute,
+            period,
+            "It's time to start your session!",
+            "Start Your Session"
           );
         } catch (notificationError) {
           console.error("Error scheduling notification:", notificationError);
-        }
-      } else {
-        try {
-          await NotificationService.cancelAllNotifications();
-        } catch (notificationError) {
-          console.error("Error cancelling notifications:", notificationError);
         }
       }
 
