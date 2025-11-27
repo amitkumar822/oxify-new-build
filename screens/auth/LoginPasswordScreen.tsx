@@ -36,7 +36,7 @@ interface RouteParams {
 }
 
 const LoginPasswordScreen: React.FC = () => {
-  const [password, setPassword] = useState("Test@123");
+  const [password, setPassword] = useState(""); //Test@123
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
