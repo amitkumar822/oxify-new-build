@@ -35,6 +35,7 @@ interface ArticleCardProps {
   showDeleteButton?: boolean;
   onDelete?: () => void;
   onOpenDetails?: () => void;
+  commenterImages?: string[];
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
@@ -54,6 +55,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   showDeleteButton = false,
   onDelete,
   onOpenDetails,
+  commenterImages = [],
 }) => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const bookmarkScale = React.useRef(new Animated.Value(1)).current;
@@ -138,14 +140,16 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             {/* Status Pill */}
             {articleStatus && (
               <View
-                className={`px-2 py-1 ${articleStatus === "draft"
-                  ? "border border-[#60A5FA] bg-transparent rounded-full"
-                  : "bg-[#60A5FA] rounded-lg"
-                  }`}
+                className={`px-2 py-1 ${
+                  articleStatus === "draft"
+                    ? "border border-[#60A5FA] bg-transparent rounded-full"
+                    : "bg-[#60A5FA] rounded-lg"
+                }`}
               >
                 <Text
-                  className={` font-semibold ${articleStatus === "draft" ? "text-[#60A5FA]" : "text-white"
-                    }`}
+                  className={` font-semibold ${
+                    articleStatus === "draft" ? "text-[#60A5FA]" : "text-white"
+                  }`}
                   style={{ fontSize: TEXT_SIZES.xs }}
                 >
                   {articleStatus === "draft" ? "Draft" : "Published"}
@@ -207,11 +211,29 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
         {showReactionsAndComments && reactions && (
           <View className="flex-row mb-3 gap-2 px-4">
-            <Text className="text-[#8BAFCE]" style={{ fontSize: 9, fontFamily: "InterMedium" }}> ❤️ {reactions.heart}{" "}
+            <Text
+              className="text-[#8BAFCE]"
+              style={{ fontSize: 9, fontFamily: "InterMedium" }}
+            >
+              {" "}
+              ❤️ {reactions.heart}{" "}
             </Text>
-            <Text className="text-[#8BAFCE]" style={{ fontSize: 9, fontFamily: "InterMedium" }}>🔥 {reactions.fire}</Text>
-            <Text className="text-[#8BAFCE]" style={{ fontSize: 9, fontFamily: "InterMedium" }}>😮{reactions.wow}</Text>
-            <Text className="text-[#8BAFCE]" style={{ fontSize: 9, fontFamily: "InterMedium" }}>
+            <Text
+              className="text-[#8BAFCE]"
+              style={{ fontSize: 9, fontFamily: "InterMedium" }}
+            >
+              🔥 {reactions.fire}
+            </Text>
+            <Text
+              className="text-[#8BAFCE]"
+              style={{ fontSize: 9, fontFamily: "InterMedium" }}
+            >
+              😮{reactions.wow}
+            </Text>
+            <Text
+              className="text-[#8BAFCE]"
+              style={{ fontSize: 9, fontFamily: "InterMedium" }}
+            >
               💡 {reactions.acknowledgement}
             </Text>
           </View>
@@ -221,7 +243,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           <>
             <View className="border-y mb-4 border-white/10 py-3 sm:py-4 flex-row items-center justify-between px-4">
               <Text
-                style={{ fontSize: 9, fontFamily: "InterSemiBold", lineHeight: 14, color: "rgba(217, 217, 217, 0.5)" }}
+                style={{
+                  fontSize: 9,
+                  fontFamily: "InterSemiBold",
+                  lineHeight: 14,
+                  color: "rgba(217, 217, 217, 0.5)",
+                }}
               >
                 Tap to react
               </Text>
@@ -276,13 +303,29 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
             </TouchableOpacity>
             <View className="flex-row items-center justify-between px-2 mt-3 mx-4">
               <View className="flex-row items-center">
-                {[1, 2, 3].map((k) => (
+                {(commenterImages.length > 0
+                  ? commenterImages.slice(0, 3)
+                  : [null, null, null]
+                ).map((img, idx) => (
                   <View
-                    key={k}
-                    className="-ml-2 h-6 w-6 bg-[#334155] rounded-full border border-[#1E293B]"
-                  />
+                    key={idx}
+                    className="-ml-2 h-6 w-6 rounded-full border border-[#1E293B] overflow-hidden items-center justify-center bg-[#334155]"
+                  >
+                    {img ? (
+                      <Image
+                        source={{ uri: img }}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    ) : null}
+                  </View>
                 ))}
-                <Text className="text-white ml-2" style={{ fontSize: 9, fontFamily: "InterMedium" }}>
+                <Text
+                  className="text-white ml-2"
+                  style={{ fontSize: 9, fontFamily: "InterMedium" }}
+                >
                   {Number(totalComments) > 0
                     ? Boolean(loggedUserCommented)
                       ? Number(totalComments) === 1
@@ -296,7 +339,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
               </View>
               <TouchableOpacity onPress={() => setIsCommentsOpen(true)}>
                 <Text
-                  style={{ fontSize: 9, fontFamily: "InterMedium", color: "#8BAFCE" }}
+                  style={{
+                    fontSize: 9,
+                    fontFamily: "InterMedium",
+                    color: "#8BAFCE",
+                  }}
                 >
                   view comments
                 </Text>

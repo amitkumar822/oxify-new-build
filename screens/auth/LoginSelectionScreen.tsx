@@ -24,20 +24,20 @@ import { storeToken, storeUserData } from "../../utils/tokenManager";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { usePushNotifications } from "@/utils/usePushNotifications";
 
-import {
-  GoogleSignin,
-  statusCodes,
-  // @ts-ignore
-  User,
-  // @ts-ignore
-} from "@react-native-google-signin/google-signin";
+// import {
+//   GoogleSignin,
+//   statusCodes,
+//   // @ts-ignore
+//   User,
+//   // @ts-ignore
+// } from "@react-native-google-signin/google-signin";
 
-GoogleSignin.configure({
-  webClientId:
-    "927622491931-g2o5jvoimej5o9l1m8pvagp79ci5fjgi.apps.googleusercontent.com",
-  offlineAccess: true,
-  forceCodeForRefreshToken: true,
-});
+// GoogleSignin.configure({
+//   webClientId:
+//     "927622491931-g2o5jvoimej5o9l1m8pvagp79ci5fjgi.apps.googleusercontent.com",
+//   offlineAccess: true,
+//   forceCodeForRefreshToken: true,
+// });
 
 const LoginSelectionScreen: React.FC = () => {
   const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
@@ -96,7 +96,10 @@ const LoginSelectionScreen: React.FC = () => {
                 await storeToken(backendData.data.access_token);
                 // Save push notification token
                 if (expoPushToken?.data) {
-                  await authApi.pushNotificationTokenSave(expoPushToken.data, Platform.OS == "ios" ? "ios" : "android");
+                  await authApi.pushNotificationTokenSave(
+                    expoPushToken.data,
+                    Platform.OS == "ios" ? "ios" : "android"
+                  );
                 }
                 // Prepare user data in the format expected by the app
                 const userData = {
@@ -139,7 +142,11 @@ const LoginSelectionScreen: React.FC = () => {
       }
     } catch (e: any) {
       console.error("Error:", e);
-      Alert.alert("Error", "Failed to sign in with Apple. Please try again.", e?.message || "Unknown error");
+      Alert.alert(
+        "Error",
+        "Failed to sign in with Apple. Please try again.",
+        e?.message || "Unknown error"
+      );
     } finally {
       setIsAppleLoading(false);
     }
@@ -148,82 +155,76 @@ const LoginSelectionScreen: React.FC = () => {
   //-------------------Start google login-------------------
 
   const handleGoogleLogin = async () => {
-    try {
-      setIsGoogleLoading(true);
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-      if (response && response?.type === "success") {
-        try {
-          const googleLoginResponse = await authApi.googleLoginInfoSave(
-            response?.data?.idToken
-          );
-          if (googleLoginResponse?.success && googleLoginResponse?.data) {
-            const backendData = googleLoginResponse.data as any;
-            // Check if backend response has the expected structure
-            if (backendData?.statusCode === 200 && backendData?.data) {
-              try {
-                // Store the access_token as the auth token
-                await storeToken(backendData.data.access_token);
-                // Save push notification token
-                if (expoPushToken?.data) {
-                  await authApi.pushNotificationTokenSave(expoPushToken.data, Platform.OS == "ios" ? "ios" : "android");
-                }
-                // Prepare user data in the format expected by the app
-                const userData = {
-                  user_id: backendData.data.user?.id || 0,
-                  email: backendData.data.user?.email || "",
-                  is_superuser: false, // Google login users are not superusers by default
-                  token: backendData.data.access_token,
-                };
-                await storeUserData(userData);
-                await login(userData);
-                showToast.success("Google login successful");
-                navigation.replace("MainStack");
-              } catch (tokenError) {
-                showToast.error("Login successful but failed to store session");
-              }
-            } else {
-              const errorMessage =
-                backendData?.message || "Sign in failed. Please try again.";
-              showToast.error(errorMessage);
-            }
-          } else {
-            const errorMessage =
-              googleLoginResponse?.error || "Sign in failed. Please try again.";
-            showToast.error(errorMessage);
-          }
-        } catch (error) {
-          showToast.error(
-            "Failed to authenticate with server. Please try again."
-          );
-        }
-      } else {
-        showToast.error("Google sign in was not successful");
-      }
-    } catch (error: any) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        showToast.error("Sign in cancelled");
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        showToast.error("Sign in already in progress");
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        showToast.error("Google Play services not available");
-      } else {
-        showToast.error("Failed to sign in with Google. Please try again.");
-      }
-    } finally {
-      setIsGoogleLoading(false);
-    }
+    // try {
+    //   setIsGoogleLoading(true);
+    //   await GoogleSignin.hasPlayServices();
+    //   const response = await GoogleSignin.signIn();
+    //   if (response && response?.type === "success") {
+    //     try {
+    //       const googleLoginResponse = await authApi.googleLoginInfoSave(
+    //         response?.data?.idToken
+    //       );
+    //       if (googleLoginResponse?.success && googleLoginResponse?.data) {
+    //         const backendData = googleLoginResponse.data as any;
+    //         // Check if backend response has the expected structure
+    //         if (backendData?.statusCode === 200 && backendData?.data) {
+    //           try {
+    //             // Store the access_token as the auth token
+    //             await storeToken(backendData.data.access_token);
+    //             // Save push notification token
+    //             if (expoPushToken?.data) {
+    //               await authApi.pushNotificationTokenSave(expoPushToken.data, Platform.OS == "ios" ? "ios" : "android");
+    //             }
+    //             // Prepare user data in the format expected by the app
+    //             const userData = {
+    //               user_id: backendData.data.user?.id || 0,
+    //               email: backendData.data.user?.email || "",
+    //               is_superuser: false, // Google login users are not superusers by default
+    //               token: backendData.data.access_token,
+    //             };
+    //             await storeUserData(userData);
+    //             await login(userData);
+    //             showToast.success("Google login successful");
+    //             navigation.replace("MainStack");
+    //           } catch (tokenError) {
+    //             showToast.error("Login successful but failed to store session");
+    //           }
+    //         } else {
+    //           const errorMessage =
+    //             backendData?.message || "Sign in failed. Please try again.";
+    //           showToast.error(errorMessage);
+    //         }
+    //       } else {
+    //         const errorMessage =
+    //           googleLoginResponse?.error || "Sign in failed. Please try again.";
+    //         showToast.error(errorMessage);
+    //       }
+    //     } catch (error) {
+    //       showToast.error(
+    //         "Failed to authenticate with server. Please try again."
+    //       );
+    //     }
+    //   } else {
+    //     showToast.error("Google sign in was not successful");
+    //   }
+    // } catch (error: any) {
+    //   if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+    //     showToast.error("Sign in cancelled");
+    //   } else if (error.code === statusCodes.IN_PROGRESS) {
+    //     showToast.error("Sign in already in progress");
+    //   } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+    //     showToast.error("Google Play services not available");
+    //   } else {
+    //     showToast.error("Failed to sign in with Google. Please try again.");
+    //   }
+    // } finally {
+    //   setIsGoogleLoading(false);
+    // }
   };
   //-------------------End google login-------------------
 
   return (
-    <LinearGradient
-      colors={[
-        "#090B0D",
-        "#090B0D",
-      ]}
-      style={styles.gradient}
-    >
+    <LinearGradient colors={["#090B0D", "#090B0D"]} style={styles.gradient}>
       <SafeAreaView className="flex w-full h-full items-center justify-start ">
         <Animated.View
           style={[

@@ -260,6 +260,7 @@ const ProtocolsHubScreen: React.FC = () => {
         totalComments={article.total_comments}
         loggedUserCommented={article.logged_user_comment}
         isBookmarked={article.is_favourite_learning_hub || false}
+        commenterImages={article.last_three_commenters_images || []}
         onBookmarkToggle={() => handleBookmarkToggle(article.id)}
         onOpenDetails={() =>
           navigation.navigate("ContentStack", {

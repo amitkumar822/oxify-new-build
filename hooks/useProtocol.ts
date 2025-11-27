@@ -2,24 +2,34 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { protocolApi } from "../api/protocol";
 import { queryKeys } from "../config/queryClient";
 import { showToast } from "../config";
+import { useAuthGate } from "./useAuthGate";
+
+const useAuthEnabled = () => {
+  const { authReady } = useAuthGate();
+  return authReady;
+};
 
 // Custom hook for getting protocols
 export const useProtocols = () => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: queryKeys.protocols.lists(),
     queryFn: protocolApi.getProtocols,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
     gcTime: 48 * 60 * 60 * 1000, // 48 hours
+    enabled: authReady,
   });
 };
 
 // Custom hook for getting suggested protocols
 export const useSuggestedProtocols = () => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [...queryKeys.protocols.lists(), "suggested"],
     queryFn: protocolApi.getSuggestedProtocols,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    enabled: authReady,
   });
 };
 
@@ -34,6 +44,7 @@ export const useSuggestedProtocolsFiltered = ({
   page: number;
   perPage: number;
 }) => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [
       ...queryKeys.protocols.lists(),
@@ -51,20 +62,24 @@ export const useSuggestedProtocolsFiltered = ({
     },
     staleTime: 2 * 60 * 1000,
     gcTime: 5 * 60 * 1000,
+    enabled: authReady,
   });
 };
 
 export const useProtocolCategoryList = () => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [...queryKeys.protocols.lists(), "categoryList"],
     queryFn: protocolApi.getProtocolCategoryList,
     staleTime: 24 * 60 * 60 * 1000,
     gcTime: 48 * 60 * 60 * 1000,
+    enabled: authReady,
   });
 };
 
 // Custom hook to fetch user's session protocols for analytics filter
 export const useUserSessionProtocols = () => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [...queryKeys.protocols.lists(), "user-session-protocols"],
     queryFn: () => {
@@ -73,16 +88,19 @@ export const useUserSessionProtocols = () => {
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    enabled: authReady,
   });
 };
 
 // Custom hook to fetch user's ATA levels for analytics filter
 export const useUserSessionAtaLevels = () => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [...queryKeys.protocols.lists(), "user-session-ata-levels"],
     queryFn: protocolApi.getUserSessionAtaLevels,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    enabled: authReady,
   });
 };
 
@@ -94,11 +112,13 @@ export const useFavoriteProtocols = ({
   page: number;
   perPage: number;
 }) => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [...queryKeys.protocols.lists(), "favorites", page, perPage],
     queryFn: () => protocolApi.getFavoriteProtocols({ page, perPage }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: authReady,
   });
 };
 
@@ -156,10 +176,12 @@ export const useToggleFavoriteProtocol = () => {
 
 // Custom hook for getting protocol categories
 export const useProtocolCategories = () => {
+  const authReady = useAuthEnabled();
   return useQuery({
     queryKey: [...queryKeys.protocols.lists(), "categories"],
     queryFn: protocolApi.getProtocolCategories,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
     gcTime: 48 * 60 * 60 * 1000, // 48 hours
+    enabled: authReady,
   });
 };

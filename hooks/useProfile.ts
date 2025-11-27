@@ -6,17 +6,19 @@ import {
 } from "../api/profile";
 import { queryKeys } from "../config/queryClient";
 import { showToast } from "../config";
+import { useAuthGate } from "./useAuthGate";
 
 // Custom hook for getting profile
 export const useProfile = () => {
-  const result = useQuery({
+  const { authReady } = useAuthGate();
+  return useQuery({
     queryKey: queryKeys.profile.all,
     queryFn: profileApi.getProfile,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0,
     gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: authReady,
+    refetchOnMount: "always",
   });
-
-  return result;
 };
 
 // Custom hook for updating profile

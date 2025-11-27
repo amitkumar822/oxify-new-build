@@ -1,4 +1,5 @@
 import { getToken } from "../utils/tokenManager";
+import { emitUnauthorized } from "../utils/authEvents";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -63,6 +64,10 @@ export async function apiCall<T = unknown>(
         if (errorText) {
           errorMessage = errorText;
         }
+      }
+
+      if (response.status === 401) {
+        emitUnauthorized();
       }
 
       return {

@@ -128,6 +128,9 @@ const ArticleDetailsScreen: React.FC = () => {
                   totalComments={articleData.total_comments}
                   loggedUserCommented={articleData.logged_user_comment}
                   isBookmarked={articleData.is_favourite_learning_hub || false}
+                  commenterImages={
+                    articleData.last_three_commenters_images || []
+                  }
                   onBookmarkToggle={() => handleBookmarkToggle(articleData.id)}
                   showReactionsAndComments={true}
                   showBookmark={true}
