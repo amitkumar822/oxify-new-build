@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -9,23 +8,16 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
-  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 const { useNavigation } = require("@react-navigation/native");
-import { SCREEN_NAMES } from "../../constants";
 import { chamberApi } from "../../api/chamber";
 import { showToast } from "../../config/toast";
-import { storeChamberId, getChamberId } from "../../utils/tokenManager";
+import { storeChamberId } from "../../utils/tokenManager";
 import { useAuth } from "../../contexts/AuthContext";
-import { TEXT_SIZES } from "../../constants/textSizes";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AppStatusBar } from "../../helpers/AppStatusBar";
 import { Theme } from "../../constants";
-import { RFValue } from "react-native-responsive-fontsize";
-import { Dimensions } from "react-native";
-import RenderFooter from "@/components/common/RenderFooter";
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather";
 import { BackHeader } from "@/helpers/BackHeader";
 import RenderChamberCard from "@/components/common/RenderChamberCard";
 
@@ -57,7 +49,6 @@ const ChamberSelectionScreen: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<ChamberModel | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { width, height } = Dimensions.get("window");
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -89,17 +80,17 @@ const ChamberSelectionScreen: React.FC = () => {
         const payload: any = response.data;
         const list: ChamberModel[] = Array.isArray(payload?.data)
           ? payload.data.map((item: any) => ({
-            id: item.id,
-            sku: item.sku,
-            name: item.name,
-            chamber_type: item.chamber_type,
-            category: item.category,
-            max_ata_level: item.max_ata_level || [],
-            description: item.description,
-            is_active: item.is_active,
-            image: item.image,
-            protocol: item.protocol || [],
-          }))
+              id: item.id,
+              sku: item.sku,
+              name: item.name,
+              chamber_type: item.chamber_type,
+              category: item.category,
+              max_ata_level: item.max_ata_level || [],
+              description: item.description,
+              is_active: item.is_active,
+              image: item.image,
+              protocol: item.protocol || [],
+            }))
           : [];
 
         if (isFirstLoad || isRefresh) {
@@ -210,7 +201,6 @@ const ChamberSelectionScreen: React.FC = () => {
       style={styles.gradient}
     >
       <SafeAreaView className="flex-1">
-
         {/* Back Header */}
         <BackHeader />
 
@@ -238,7 +228,10 @@ const ChamberSelectionScreen: React.FC = () => {
           </Text>
 
           {/* Search Bar */}
-          <View className="bg-white rounded-xl px-4 mb-4 flex-row items-center justify-between" style={{ borderWidth: 1, borderColor: "#8BAFCE" }}>
+          <View
+            className="bg-white rounded-xl px-4 mb-4 flex-row items-center justify-between"
+            style={{ borderWidth: 1, borderColor: "#8BAFCE" }}
+          >
             <TextInput
               className="flex-1 text-gray-900 "
               placeholder="Search chamber model"
@@ -271,13 +264,6 @@ const ChamberSelectionScreen: React.FC = () => {
               contentContainerStyle={{ paddingBottom: 20 }}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.3}
-              // ListFooterComponent={() => (
-              //   <RenderFooter
-              //     isLoadingMore={isLoadingMore}
-              //     hasNextPage={hasNextPage}
-              //     text="chambers"
-              //   />
-              // )}
               refreshing={refreshing}
               onRefresh={handleRefresh}
               ListEmptyComponent={() => (
@@ -296,7 +282,8 @@ const ChamberSelectionScreen: React.FC = () => {
                 backgroundColor: selectedModel ? "#F3F3F3" : "#b9b1b1",
                 // marginBottom: 20,
                 borderRadius: 14,
-              }} onPress={handleContinue}
+              }}
+              onPress={handleContinue}
               disabled={!selectedModel}
             >
               <Text

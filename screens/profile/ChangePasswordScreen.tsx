@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+  StyleSheet,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
@@ -24,10 +31,17 @@ const ChangePasswordScreen: React.FC = () => {
   const [isConfirmFocused, setIsConfirmFocused] = useState(false);
 
   const changePasswordMutation = useChangePassword();
-  const { data: profileData }: { data: any} = useProfile();
+  const { data: profileData }: { data: any } = useProfile();
 
   // Get user email from profile
   const userEmail = profileData?.data?.data?.email || "";
+
+  // Password validation functions
+  const hasMinLength = newPassword.length >= 8 && newPassword.length <= 32;
+  const hasLowercase = /[a-z]/.test(newPassword);
+  const hasUppercase = /[A-Z]/.test(newPassword);
+  const hasNumber = /\d/.test(newPassword);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
 
   const handleChangePassword = async () => {
     // Validation
@@ -46,8 +60,40 @@ const ChangePasswordScreen: React.FC = () => {
       return;
     }
 
-    if (newPassword.length < 6) {
-      Alert.alert("Error", "New password must be at least 6 characters long");
+    if (newPassword.length < 8 || newPassword.length > 32) {
+      Alert.alert(
+        "Error",
+        "New password must be between 8 and 32 characters long"
+      );
+      return;
+    }
+
+    if (!hasLowercase) {
+      Alert.alert(
+        "Error",
+        "New password must include at least one lowercase character"
+      );
+      return;
+    }
+
+    if (!hasUppercase) {
+      Alert.alert(
+        "Error",
+        "New password must include at least one uppercase character"
+      );
+      return;
+    }
+
+    if (!hasNumber) {
+      Alert.alert("Error", "New password must include at least one number");
+      return;
+    }
+
+    if (!hasSpecialChar) {
+      Alert.alert(
+        "Error",
+        "New password must include at least one special character"
+      );
       return;
     }
 
@@ -110,9 +156,9 @@ const ChangePasswordScreen: React.FC = () => {
             <Text
               className="text-white font-semibold"
               style={{
-                fontFamily: "Inter",
+                fontFamily: "InterRegular",
                 textAlign: "center",
-                fontSize: TEXT_SIZES.lg,
+                fontSize: 18,
               }}
             >
               Change Password
@@ -132,7 +178,7 @@ const ChangePasswordScreen: React.FC = () => {
                   Old password
                 </Text>
                 <View
-                  className="bg-white rounded-[12px] px-4 mb-4  flex-row items-center justify-between"
+                  className="bg-white rounded-[12px] px-4 mb-4 flex-row items-center justify-between"
                   style={{
                     borderWidth: 2,
                     borderColor: isCurrentFocused ? "#8BAFCE" : "transparent",
@@ -144,7 +190,11 @@ const ChangePasswordScreen: React.FC = () => {
                     onFocus={() => setIsCurrentFocused(true)}
                     onBlur={() => setIsCurrentFocused(false)}
                     className="text-black  flex-1"
-                    style={{ fontSize: TEXT_SIZES.sm, paddingVertical: 14,borderRadius: 12 }}
+                    style={{
+                      fontSize: TEXT_SIZES.sm,
+                      paddingVertical: 14,
+                      borderRadius: 12,
+                    }}
                     placeholder="Enter your old password"
                     placeholderTextColor="#9CA3AF"
                     secureTextEntry={!showCurrentPassword}
@@ -182,7 +232,11 @@ const ChangePasswordScreen: React.FC = () => {
                     onFocus={() => setIsNewFocused(true)}
                     onBlur={() => setIsNewFocused(false)}
                     className="text-black  flex-1"
-                    style={{ fontSize: TEXT_SIZES.sm, paddingVertical: 14,borderRadius: 12 }}
+                    style={{
+                      fontSize: TEXT_SIZES.sm,
+                      paddingVertical: 14,
+                      borderRadius: 12,
+                    }}
                     placeholder="Enter your new password"
                     placeholderTextColor="#9CA3AF"
                     secureTextEntry={!showNewPassword}
@@ -220,8 +274,11 @@ const ChangePasswordScreen: React.FC = () => {
                     onFocus={() => setIsConfirmFocused(true)}
                     onBlur={() => setIsConfirmFocused(false)}
                     className="text-black  flex-1"
-                    style={{ fontSize: TEXT_SIZES.sm, paddingVertical: 14,borderRadius: 12 }}
-                    // placeholder="•••••"
+                    style={{
+                      fontSize: TEXT_SIZES.sm,
+                      paddingVertical: 14,
+                      borderRadius: 12,
+                    }}
                     placeholder="Enter your confirm password"
                     placeholderTextColor="#9CA3AF"
                     secureTextEntry={!showConfirmPassword}
@@ -249,7 +306,11 @@ const ChangePasswordScreen: React.FC = () => {
               </Text>
               <View className="space-y-3">
                 <View className="flex-row items-center">
-                  <AntDesign name="check" size={16} color="#8BAFCE" />
+                  <AntDesign
+                    name="check"
+                    size={16}
+                    color={hasMinLength ? "#8BAFCE" : "white"}
+                  />
                   <Text
                     className="text-white ml-3"
                     style={{ fontSize: TEXT_SIZES.sm }}
@@ -258,7 +319,11 @@ const ChangePasswordScreen: React.FC = () => {
                   </Text>
                 </View>
                 <View className="flex-row items-center">
-                  <AntDesign name="check" size={16} color="#8BAFCE" />
+                  <AntDesign
+                    name="check"
+                    size={16}
+                    color={hasLowercase ? "#8BAFCE" : "white"}
+                  />
                   <Text
                     className="text-white ml-3"
                     style={{ fontSize: TEXT_SIZES.sm }}
@@ -267,7 +332,11 @@ const ChangePasswordScreen: React.FC = () => {
                   </Text>
                 </View>
                 <View className="flex-row items-center">
-                  <AntDesign name="check" size={16} color="#8BAFCE" />
+                  <AntDesign
+                    name="check"
+                    size={16}
+                    color={hasUppercase ? "#8BAFCE" : "white"}
+                  />
                   <Text
                     className="text-white ml-3"
                     style={{ fontSize: TEXT_SIZES.sm }}
@@ -276,7 +345,11 @@ const ChangePasswordScreen: React.FC = () => {
                   </Text>
                 </View>
                 <View className="flex-row items-center">
-                  <AntDesign name="check" size={16} color="#8BAFCE" />
+                  <AntDesign
+                    name="check"
+                    size={16}
+                    color={hasNumber ? "#8BAFCE" : "white"}
+                  />
                   <Text
                     className="text-white ml-3"
                     style={{ fontSize: TEXT_SIZES.sm }}
@@ -285,7 +358,11 @@ const ChangePasswordScreen: React.FC = () => {
                   </Text>
                 </View>
                 <View className="flex-row items-center">
-                  <AntDesign name="check" size={16} color="#8BAFCE" />
+                  <AntDesign
+                    name="check"
+                    size={16}
+                    color={hasSpecialChar ? "#8BAFCE" : "white"}
+                  />
                   <Text
                     className="text-white ml-3"
                     style={{ fontSize: TEXT_SIZES.sm }}
@@ -300,10 +377,10 @@ const ChangePasswordScreen: React.FC = () => {
           {/* Update Button - Positioned at bottom */}
           <View className="pb-6">
             <TouchableOpacity
-              className={`rounded-[36px] py-4 items-center h-[54px] ${
+              className={`rounded-[36px] py-4 items-center ${
                 isLoading ? "opacity-50" : ""
               }`}
-              style={{ backgroundColor: "#6189AD",paddingVertical: 16 }}
+              style={{ backgroundColor: "#6189AD", paddingVertical: 16 }}
               onPress={handleChangePassword}
               disabled={isLoading}
             >

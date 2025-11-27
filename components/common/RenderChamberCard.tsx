@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View, TouchableOpacity, Image, Platform } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { ChamberModel } from '@/screens/main/ChamberSelectionScreen';
+import { capitalizeFirst } from '@/utils/capitalizeFirst';
 
 interface RenderChamberCardProps {
   model: ChamberModel;
@@ -51,7 +52,7 @@ const RenderChamberCard: React.FC<RenderChamberCardProps> = ({
               fontFamily: "RobotoRegular",
               fontSize: RFValue(8.5),
             }}
-          >{model.name}</Text>
+          >{capitalizeFirst(model.name)}</Text>
         </View>
       </TouchableOpacity>
     </View>

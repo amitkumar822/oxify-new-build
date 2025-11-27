@@ -303,6 +303,7 @@ const StatisticsDashboardScreen: React.FC = () => {
       const date = new Date(year, monthIndex, 1);
       return date.getDay(); // 0 = Sunday, 1 = Monday, etc.
     };
+
     const firstDayOfWeek = getFirstDayOfWeek(selectedMonth, selectedYear);
     const calendarDays = [];
     let dayCount = 1;
@@ -314,7 +315,7 @@ const StatisticsDashboardScreen: React.FC = () => {
         if (row === 0) {
           // First row is for day headers (already handled separately)
           rowDays.push(
-            <View key={`empty-header-${col}`} className="w-10 h-10" />
+            <View key={`empty-header-${col}`} className="w-12 h-12" />
           );
         } else {
           // Data rows
@@ -322,7 +323,7 @@ const StatisticsDashboardScreen: React.FC = () => {
           if (dayIndex < firstDayOfWeek || dayCount > daysInMonth) {
             // Empty cell (before month starts or after month ends)
             rowDays.push(
-              <View key={`empty-${row}-${col}`} className="w-10 h-10" />
+              <View key={`empty-${row}-${col}`} className="w-12 h-12" />
             );
           } else {
             // Valid day of the month
@@ -332,37 +333,34 @@ const StatisticsDashboardScreen: React.FC = () => {
             rowDays.push(
               <TouchableOpacity
                 key={`day-${thisDay}`}
-                className="w-10 h-10 overflow-hidden rounded-full items-center justify-center"
+                className="w-12 h-12 overflow-hidden rounded-full items-center justify-center"
                 style={{
                   backgroundColor: isSelected ? "#3B82F6" : "transparent",
-                  borderWidth: isSelected ? 2 : hasSession ? 2 : 1,
+                  borderWidth: isSelected ? 0 : hasSession ? 3 : 1,
                   borderColor: isSelected
                     ? "#93C5FD"
                     : hasSession
-                      ? "#60A5FA"
+                      ? "#4C8BF5"
                       : "transparent",
                 }}
                 onPress={() => handleDateSelection(thisDay)}
               >
                 <Text
                   style={{
-                    fontSize: TEXT_SIZES.sm,
+                    fontSize: 18,
                     fontFamily: "InterRegular",
-                    color: isSelected
-                      ? "#FFFFFF"
-                      : hasSession
-                        ? "#60A5FA"
-                        : "#FFFFFF",
+                    lineHeight: 24,
+                    color: "white",
                   }}
                 >
                   {thisDay}
                 </Text>
-                {isSelected && (
+                {/* {isSelected && (
                   <View
                     className="absolute -bottom-1 w-1 h-1 rounded-full"
                     style={{ backgroundColor: "#FFFFFF" }}
                   />
-                )}
+                )} */}
               </TouchableOpacity>
             );
             dayCount++;
@@ -370,7 +368,7 @@ const StatisticsDashboardScreen: React.FC = () => {
         }
       }
       calendarDays.push(
-        <View key={`row-${row}`} className="flex-row justify-between mb-2">
+        <View key={`row-${row}`} className="flex-row justify-between mb-3">
           {rowDays}
         </View>
       );
@@ -404,7 +402,7 @@ const StatisticsDashboardScreen: React.FC = () => {
         />
 
         <View className="flex-1 px-4 -mt-3">
-          <View className="mb-1">
+          <View className="mb-[6px]">
             {/* Filter Row */}
             <View className="flex-row flex-wrap items-center relative">
               <TouchableOpacity
@@ -596,7 +594,7 @@ const StatisticsDashboardScreen: React.FC = () => {
           >
             {/* Session Details Section */}
             <Text
-              className="mb-3"
+              className="mb-4"
               style={{
                 fontSize: 16,
                 fontFamily: "InterRegular",
@@ -607,32 +605,27 @@ const StatisticsDashboardScreen: React.FC = () => {
             </Text>
 
             {/* Calendar */}
-            <View className="bg-[#090A0B] rounded-[32px] p-[16px]">
+            <View className="bg-[#090A0B] rounded-[32px] p-[16px] pt-6">
               <>
                 {/* Month/Year Navigation */}
-                <View className=" flex-row items-center justify-between mb-4">
+                <View className=" flex-row items-center justify-between mb-2">
                   <View className="flex-row items-center justify-between mb-4">
                     <TouchableOpacity onPress={() => handlePreviousMonth()}>
-                      <AntDesign
-                        name="left"
-                        size={20}
-                        color="white"
-                        style={{ fontSize: TEXT_SIZES.md }}
-                      />
+                      <AntDesign name="left" size={20} color="#DDE2E5" />
                     </TouchableOpacity>
                     <Text
-                      className="text-white  mx-2"
-                      style={{ fontSize: TEXT_SIZES.lg }}
+                      className="mx-2"
+                      style={{
+                        fontSize: 18,
+                        fontFamily: "InterBold",
+                        color: "#DDE2E5",
+                        lineHeight: 24,
+                      }}
                     >
                       {selectedMonth}
                     </Text>
                     <TouchableOpacity onPress={() => handleNextMonth()}>
-                      <AntDesign
-                        name="right"
-                        size={20}
-                        color="white"
-                        style={{ fontSize: TEXT_SIZES.md }}
-                      />
+                      <AntDesign name="right" size={20} color="#DDE2E5" />
                     </TouchableOpacity>
                   </View>
                   <View className="flex-row items-center justify-between mb-4">
@@ -647,8 +640,13 @@ const StatisticsDashboardScreen: React.FC = () => {
                       />
                     </TouchableOpacity>
                     <Text
-                      className="text-white mx-2"
-                      style={{ fontSize: TEXT_SIZES.lg }}
+                      className="mx-2"
+                      style={{
+                        fontSize: 18,
+                        fontFamily: "InterBold",
+                        color: "#DDE2E5",
+                        lineHeight: 24,
+                      }}
                     >
                       {selectedYear}
                     </Text>
@@ -665,31 +663,36 @@ const StatisticsDashboardScreen: React.FC = () => {
                   </View>
                 </View>
 
+                <View className="h-[0.33px] w-full bg-[#616B79] mb-4" />
+
                 {/* Days of Week */}
-                <View className="flex-row justify-between ">
-                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-                    (day, index) => (
-                      <Text
-                        key={day}
-                        className={`w-10 text-center   ${
-                          index === 0 || index === 6
-                            ? "text-blue-400"
-                            : "text-white"
-                        }`}
-                        style={{ fontSize: TEXT_SIZES.sm }}
-                      >
-                        {day}
-                      </Text>
-                    )
-                  )}
+                <View className="flex-row justify-between">
+                  {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
+                    <Text
+                      key={index}
+                      className={`w-10 text-center   ${
+                        index === 0 || index === 6
+                          ? "text-blue-400"
+                          : "text-[#8BAFCE]"
+                      }`}
+                      style={{
+                        fontSize: 18,
+                        fontFamily: "InterBold",
+                        lineHeight: 24,
+                      }}
+                    >
+                      {day}
+                    </Text>
+                  ))}
                 </View>
+
                 {/* Calendar Grid */}
-                <View className="w-full">{renderCalendar()}</View>
+                <View className="w-full -mt-6">{renderCalendar()}</View>
               </>
 
               {/* View Session Details Button */}
               <View
-                className={`flex-full w-full items-center justify-between rounded-full mt-8 ${
+                className={`flex-full w-full items-center justify-between rounded-full mt-3 ${
                   selectedDateString ? "bg-[#4C8BF5]" : "bg-blue-300 "
                 }`}
               >
@@ -722,8 +725,8 @@ const StatisticsDashboardScreen: React.FC = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            {/* Charts Section */}
 
+            {/* Charts Section */}
             <View style={{ marginVertical: RFValue(14) }}>
               <GradientLine />
             </View>
@@ -734,8 +737,8 @@ const StatisticsDashboardScreen: React.FC = () => {
                 <Text
                   className="text-white "
                   style={{
-                    fontSize: TEXT_SIZES.md,
-                    fontFamily: "InterRegular",
+                    fontSize: 16,
+                    fontFamily: "InterSemiBold",
                   }}
                 >
                   Sessions
@@ -753,6 +756,7 @@ const StatisticsDashboardScreen: React.FC = () => {
                       }`}
                       style={{
                         fontSize: Math.max(8, Math.min(12, TEXT_SIZES.xs)),
+                        fontFamily: "InterMedium",
                       }}
                     >
                       Week
@@ -770,7 +774,7 @@ const StatisticsDashboardScreen: React.FC = () => {
                       }`}
                       style={{
                         fontSize: Math.max(8, Math.min(12, TEXT_SIZES.xs)),
-                        fontFamily: "InterRegular",
+                        fontFamily: "InterMedium",
                       }}
                     >
                       Month
@@ -820,8 +824,8 @@ const StatisticsDashboardScreen: React.FC = () => {
                 <Text
                   className="text-white "
                   style={{
-                    fontSize: TEXT_SIZES.md,
-                    fontFamily: "InterRegular",
+                    fontSize: 16,
+                    fontFamily: "InterSemiBold",
                   }}
                 >
                   ATA History

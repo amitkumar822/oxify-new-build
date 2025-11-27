@@ -110,7 +110,10 @@ const SettingsChamberModelScreen: React.FC = () => {
         setIsLoading(true);
       }
       const currentPage = isRefresh ? 1 : page;
-      const response = await chamberApi.getChambersList({ page: currentPage, perPage });
+      const response = await chamberApi.getChambersList({
+        page: currentPage,
+        perPage,
+      });
       if (response?.success && response.data) {
         const payload: any = response.data;
         const list: ChamberModel[] = Array.isArray(payload?.data)
@@ -136,10 +139,14 @@ const SettingsChamberModelScreen: React.FC = () => {
           setFilteredModels(list);
         } else if (isLoadMore) {
           // Append data for load more
-          setChamberModels(prev => [...prev, ...list]);
-          setFilteredModels(prev => [...prev, ...list]);
+          setChamberModels((prev) => [...prev, ...list]);
+          setFilteredModels((prev) => [...prev, ...list]);
         }
-        setError(list.length === 0 && currentPage === 1 ? "No chamber models found" : null);
+        setError(
+          list.length === 0 && currentPage === 1
+            ? "No chamber models found"
+            : null
+        );
       } else {
         if (currentPage === 1) {
           setChamberModels([]);
@@ -166,7 +173,7 @@ const SettingsChamberModelScreen: React.FC = () => {
   };
   const handleLoadMore = () => {
     if (hasNextPage && !isLoadingMore && !isLoading) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
       fetchChamberModels(false, true);
     }
   };
@@ -201,10 +208,10 @@ const SettingsChamberModelScreen: React.FC = () => {
       />
     );
   };
-  
+
   const renderFooter = () => {
     if (!isLoadingMore) return null;
-    
+
     return (
       <View className="py-4 items-center">
         <ActivityIndicator size="small" color="#4ECCA3" />
@@ -214,7 +221,7 @@ const SettingsChamberModelScreen: React.FC = () => {
   };
   const renderEmptyComponent = () => {
     if (isLoading) return null;
-    
+
     return (
       <View className="items-center justify-center py-10">
         <Text className="text-gray-300">
@@ -225,11 +232,7 @@ const SettingsChamberModelScreen: React.FC = () => {
   };
   return (
     <LinearGradient
-      colors={[
-        "#243551",
-        "#171D27",
-        "#14181B",
-      ]}
+      colors={["#243551", "#171D27", "#14181B"]}
       style={styles.gradient}
     >
       <SafeAreaView className="flex-1">
@@ -264,14 +267,22 @@ const SettingsChamberModelScreen: React.FC = () => {
             Select your Chamber Model
           </Text>
           {/* Search Bar */}
-          <View className="bg-white rounded-[12px] px-4 mb-4 flex-row items-center" style={{ borderWidth: 1, borderColor: "#8BAFCE" }}>
+          <View
+            className="bg-white rounded-[12px] px-4 mb-4 flex-row items-center"
+            style={{ borderWidth: 1, borderColor: "#8BAFCE" }}
+          >
             <TextInput
               className="flex-1 text-black "
               placeholder="Search chamber model"
               placeholderTextColor="#797979"
               value={searchQuery}
               onChangeText={setSearchQuery}
-              style={{ paddingVertical: 12, fontFamily: "InterRegular", fontSize: 12, textAlign: 'left' }}
+              style={{
+                paddingVertical: 12,
+                fontFamily: "InterRegular",
+                fontSize: 12,
+                textAlign: "left",
+              }}
             />
             <Feather name="search" size={18} color="#8BAFCE" />
           </View>
@@ -288,11 +299,11 @@ const SettingsChamberModelScreen: React.FC = () => {
                 renderItem={renderChamberCard}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
+                columnWrapperStyle={{ justifyContent: "space-between" }}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ 
+                contentContainerStyle={{
                   paddingBottom: 20,
-                  flexGrow: filteredModels.length === 0 ? 1 : 0
+                  flexGrow: filteredModels.length === 0 ? 1 : 0,
                 }}
                 ListEmptyComponent={renderEmptyComponent}
                 ListFooterComponent={renderFooter}
@@ -338,4 +349,3 @@ const styles = StyleSheet.create({
 });
 
 export default SettingsChamberModelScreen;
-

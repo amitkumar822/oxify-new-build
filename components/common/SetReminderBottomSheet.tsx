@@ -249,7 +249,6 @@ const SetReminderBottomSheet: React.FC<SetReminderBottomSheetProps> = ({
       onSave?.(reminderData);
       handleRequestClose();
     } catch (error) {
-      console.error("Error saving reminder data:", error);
       onSave?.(reminderData);
       handleRequestClose();
     }

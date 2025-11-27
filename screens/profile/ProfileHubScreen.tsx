@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,13 +11,14 @@ import {
   Dimensions,
   Platform,
   StyleSheet,
+  RefreshControl,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 const { useNavigation } = require("@react-navigation/native");
-import { SCREEN_NAMES, Theme } from "../../constants";
+import { SCREEN_NAMES } from "../../constants";
 import { useAuth } from "../../contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppStatusBar } from "../../helpers/AppStatusBar";
@@ -28,14 +29,13 @@ import * as ImagePicker from "expo-image-picker";
 import SkeletonLoader from "@/components/common/SkeletonLoader";
 import { Image } from "expo-image";
 import { ImageCompress } from "@/utils/ImageCompress";
-const { useFocusEffect } = require("@react-navigation/native");
 
 const { height } = Dimensions.get("window");
 
 const ProfileHubScreen: React.FC = () => {
   const navigation: any = useNavigation();
   const { logout } = useAuth();
-  const { data: profileData, isLoading: isProfileLoading } = useProfile();
+  const { data: profileData, isLoading: isProfileLoading, refetch: refetchProfile } = useProfile();
   const updateProfileMutation = useUpdateProfile();
 
   const profile: any = (profileData as any)?.data?.data;
@@ -103,7 +103,7 @@ const ProfileHubScreen: React.FC = () => {
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -296,6 +296,10 @@ const ProfileHubScreen: React.FC = () => {
     }
   };
 
+  const handleRefresh = async () => {
+    await refetchProfile();
+  };
+
   return (
     <LinearGradient
       colors={["#243551", "#171D27", "#14181B"]}
@@ -305,8 +309,9 @@ const ProfileHubScreen: React.FC = () => {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 130 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={isProfileLoading} onRefresh={handleRefresh} />}
       >
         <SafeAreaView className="flex-1 px-4">
           {/* Profile Header */}
@@ -376,22 +381,6 @@ const ProfileHubScreen: React.FC = () => {
                 {fullName}
               </Text>
             )}
-
-            {/* {isProfileLoading ? (
-              <SkeletonLoader
-                width={150}
-                height={20}
-                borderRadius={4}
-                style={{ marginTop: 8 }}
-              />
-            ) : username ? (
-              <Text
-                className="text-blue-400"
-                style={{ fontSize: 12, fontFamily: "InterRegular" }}
-              >
-                @{username}
-              </Text>
-            ) : null} */}
 
             {/* Email Skeleton */}
             {isProfileLoading ? (

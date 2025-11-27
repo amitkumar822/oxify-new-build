@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "oxify",
+    "name": "Oxify",
     "slug": "oxify",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#090A0B"
     },
     "ios": {
       "supportsTablet": true,
@@ -23,8 +23,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#14181B"
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#090A0B"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.amitkumarsingh.oxify",

@@ -431,7 +431,7 @@ const DashboardScreen: React.FC = () => {
         visible={isReminderSheetVisible}
         onClose={() => setIsReminderSheetVisible(false)}
         onSave={(reminderData) => {
-          console.log("Reminder data saved:", reminderData);
+          // console.log("Reminder data saved:", reminderData);
           // TODO: Implement reminder saving logic
         }}
       />
