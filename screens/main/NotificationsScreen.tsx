@@ -74,7 +74,8 @@ const NotificationRow = ({
           >
             {item.description}
           </Text>
-          {item.more_info?.is_redirect ? (
+          {item.more_info?.is_redirect ||
+          item.category === "streak_milestone" ? (
             <TouchableOpacity onPress={onViewDetails}>
               <Text
                 className="text-[#8BAFCE]"
@@ -90,7 +91,13 @@ const NotificationRow = ({
         </View>
         <View className="flex-row items-center">
           <View className="w-1 h-1 rounded-full bg-[#ABB0BC] mx-1" />
-          <Text style={{ fontSize: 10, fontFamily: "InterRegular", color: "#ABB0BC" }}>
+          <Text
+            style={{
+              fontSize: 10,
+              fontFamily: "InterRegular",
+              color: "#ABB0BC",
+            }}
+          >
             {formatTimeAgo(item.notification_time)}
           </Text>
         </View>
@@ -125,7 +132,7 @@ const NotificationsScreen: React.FC = () => {
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
+    // if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return "Last 7 Days";
     if (diffDays < 30) return "Last 30 Days";
     return date.toLocaleString("default", { month: "long", year: "numeric" });
@@ -194,32 +201,46 @@ const NotificationsScreen: React.FC = () => {
 
   const handleViewDetails = useCallback(
     (item: any) => {
+      // Handle streak_milestone notifications
+      if (item.category === "streak_milestone") {
+        navigation.navigate(SCREEN_NAMES.STREAK);
+        return;
+      }
+
+      // Handle article/content notifications
+      let moreInfoParsed: any = null;
+      try {
+        // more_info can be a string (JSON) or an object
+        if (typeof item.more_info === "string") {
+          moreInfoParsed = JSON.parse(item.more_info);
+        } else {
+          moreInfoParsed = item.more_info;
+        }
+      } catch (e) {
+        // If parsing fails, use more_info as is
+        moreInfoParsed = item.more_info;
+      }
+
       const contentId =
+        moreInfoParsed?.content_id ||
+        moreInfoParsed?.contentId ||
         item?.more_info?.content_id ||
         item?.more_info?.contentId ||
         item?.more_info?.data?.content_id;
 
       if (!contentId) {
-        Alert.alert("Unavailable", "Details are not available for this item yet.");
+        Alert.alert(
+          "Unavailable",
+          "Details are not available for this item yet."
+        );
         return;
       }
 
-      const stubArticle = {
-        id: contentId,
-        title: item?.description || "Article",
-        author_first_name: "",
-        author_last_name: "",
-        author_image: item?.image,
-        content: item?.description || "",
-        reaction: null,
-        total_comments: 0,
-        logged_user_comment: false,
-        is_favourite_learning_hub: false,
-      };
-
+      // Navigate to ArticleDetailsScreen with just contentId
+      // The screen will fetch the full article data using the API
       navigation.navigate("ContentStack", {
         screen: SCREEN_NAMES.ARTICLE_DETAILS,
-        params: { article: stubArticle },
+        params: { contentId: contentId },
       });
     },
     [navigation]
@@ -227,17 +248,16 @@ const NotificationsScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={[
-        "#243551",
-        "#242D3C",
-        "#14181B",
-      ]}
+      colors={["#243551", "#242D3C", "#14181B"]}
       style={styles.gradient}
     >
       <SafeAreaView className="flex-1">
         <StatusBar barStyle="light-content" />
         {/* Header */}
-        <ShadowHeader onPress={() => navigation.goBack()} title="Notifications" />
+        <ShadowHeader
+          onPress={() => navigation.goBack()}
+          title="Notifications"
+        />
 
         <FlatList
           data={listData}
@@ -269,7 +289,9 @@ const NotificationsScreen: React.FC = () => {
                   onViewDetails={() => handleViewDetails(item.item)}
                 />
                 {showDivider && (
-                  <View style={{ marginVertical: 8, backgroundColor: "#181F2A" }}>
+                  <View
+                    style={{ marginVertical: 8, backgroundColor: "#181F2A" }}
+                  >
                     <GradientLine />
                   </View>
                 )}
