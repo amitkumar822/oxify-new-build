@@ -18,7 +18,7 @@ import { Theme, SCREEN_NAMES } from "@/constants";
 import {
   useFavoriteProtocols,
   useToggleFavoriteProtocol,
-} from "@/hooks/useProtocol";
+} from "@/hooks_main/useProtocol";
 import RenderFooter from "@/components/common/RenderFooter";
 import { RenderEmptyComponent } from "@/components/common/renderEmptyComponent";
 

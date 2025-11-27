@@ -12,7 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 const { useNavigation } = require("@react-navigation/native");
 import { SCREEN_NAMES, Theme } from "../../constants";
-import { useProfile } from "../../hooks/useProfile";
+import { useProfile } from "../../hooks_main/useProfile";
 import { TEXT_SIZES } from "@/constants/textSizes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppStatusBar } from "../../helpers/AppStatusBar";

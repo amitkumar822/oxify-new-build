@@ -16,11 +16,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Theme } from "@/constants";
 import { TEXT_SIZES } from "@/constants/textSizes";
 import CommentItem from "./CommentItem";
-import { useComments } from "@/hooks/useLearning";
-import { useAddComment } from "@/hooks/useLearning";
-import { useLikeComment } from "@/hooks/useLearning";
-import { useDeleteComment } from "@/hooks/useLearning";
-import { useProfile } from "@/hooks/useProfile";
+import { useComments } from "@/hooks_main/useLearning";
+import { useAddComment } from "@/hooks_main/useLearning";
+import { useLikeComment } from "@/hooks_main/useLearning";
+import { useDeleteComment } from "@/hooks_main/useLearning";
+import { useProfile } from "@/hooks_main/useProfile";
 
 interface CommentsBottomSheetProps {
   visible: boolean;

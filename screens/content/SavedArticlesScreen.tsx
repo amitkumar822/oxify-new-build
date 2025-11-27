@@ -18,7 +18,7 @@ import { Theme } from "@/constants";
 import {
   useSavedArticles,
   useToggleFavoriteLearningContent,
-} from "@/hooks/useLearning";
+} from "@/hooks_main/useLearning";
 import RenderFooter from "@/components/common/RenderFooter";
 
 const perPage = 10;

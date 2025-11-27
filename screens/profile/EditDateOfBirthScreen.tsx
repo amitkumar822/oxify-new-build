@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 const { useNavigation } = require("@react-navigation/native");
-import { useUpdateProfile, useProfile } from "../../hooks/useProfile";
+import { useUpdateProfile, useProfile } from "../../hooks_main/useProfile";
 import { ProfileUpdateData } from "../../api/profile";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppStatusBar } from "../../helpers/AppStatusBar";

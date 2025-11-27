@@ -19,7 +19,7 @@ import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 const { useNavigation, useRoute } = require("@react-navigation/native");
-import { useHealthGoalTags } from "../../hooks/useHealthGoal";
+import { useHealthGoalTags } from "../../hooks_main/useHealthGoal";
 import { showToast } from "../../config/toast";
 import { BackHeader } from "@/helpers/BackHeader";
 import { RFValue } from "react-native-responsive-fontsize";

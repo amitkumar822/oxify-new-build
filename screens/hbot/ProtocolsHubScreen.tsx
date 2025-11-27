@@ -24,12 +24,12 @@ import {
   useProtocolCategoryList,
   useSuggestedProtocolsFiltered,
   useToggleFavoriteProtocol,
-} from "@/hooks/useProtocol";
+} from "@/hooks_main/useProtocol";
 import {
   useLearningContent,
   useLearningCategories,
   useToggleFavoriteLearningContent,
-} from "@/hooks/useLearning";
+} from "@/hooks_main/useLearning";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RenderFooter from "@/components/common/RenderFooter";
 import { RenderEmptyComponent } from "@/components/common/renderEmptyComponent";

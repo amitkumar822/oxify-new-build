@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { TEXT_SIZES } from "@/constants/textSizes";
-import { useLearningCategories, usePostArticle } from "@/hooks/useLearning";
+import { useLearningCategories, usePostArticle } from "@/hooks_main/useLearning";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
 

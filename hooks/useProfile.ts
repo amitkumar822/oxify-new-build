@@ -6,14 +6,17 @@ import {
 } from "../api/profile";
 import { queryKeys } from "../config/queryClient";
 import { showToast } from "../config";
+import { useAuthReady } from "./useAuthReady";
 
 // Custom hook for getting profile
 export const useProfile = () => {
+  const authReady = useAuthReady();
   const result = useQuery({
     queryKey: queryKeys.profile.all,
     queryFn: profileApi.getProfile,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 
   return result;

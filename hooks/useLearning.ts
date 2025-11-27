@@ -2,19 +2,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { learningApi } from "../api/learning";
 import { queryKeys } from "../config/queryClient";
 import { showToast } from "../config";
+import { useAuthReady } from "./useAuthReady";
 
 // Custom hook for getting learning categories
 export const useLearningCategories = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.learning.all, "categories"],
     queryFn: learningApi.getLearningCategories,
-    staleTime: 12 * 60 * 60 * 1000, // 12 hours
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    // staleTime: 12 * 60 * 60 * 1000, // 12 hours (temporarily disabled caching)
+    // gcTime: 24 * 60 * 60 * 1000, // 24 hours (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
 // Custom hook for getting learning content
-export const useLearningContent = (search?: string, categoryId?: number, page?: number, perPage?: number) => {
+export const useLearningContent = (
+  search?: string,
+  categoryId?: number,
+  page?: number,
+  perPage?: number
+) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [
       ...queryKeys.learning.lists(),
@@ -22,22 +31,29 @@ export const useLearningContent = (search?: string, categoryId?: number, page?: 
       { search, categoryId, page, perPage },
     ],
     queryFn: async () => {
-      const result = await learningApi.getLearningContent(search, categoryId, page, perPage);
+      const result = await learningApi.getLearningContent(
+        search,
+        categoryId,
+        page,
+        perPage
+      );
       return result;
     },
-    staleTime: 6 * 60 * 60 * 1000, // 6 hours
-    gcTime: 12 * 60 * 60 * 1000, // 12 hours
+    // staleTime: 6 * 60 * 60 * 1000, // 6 hours (temporarily disabled caching)
+    // gcTime: 12 * 60 * 60 * 1000, // 12 hours (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
 // Custom hook for getting category-based content
 export const useCategoryContent = (categoryId: number) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.learning.lists(), "category", categoryId],
     queryFn: () => learningApi.getCategoryBasedContent(categoryId),
-    staleTime: 6 * 60 * 60 * 1000, // 6 hours
-    gcTime: 12 * 60 * 60 * 1000, // 12 hours
-    enabled: !!categoryId,
+    // staleTime: 6 * 60 * 60 * 1000, // 6 hours (temporarily disabled caching)
+    // gcTime: 12 * 60 * 60 * 1000, // 12 hours (temporarily disabled caching)
+    enabled: authReady && !!categoryId,
   });
 };
 
@@ -94,12 +110,13 @@ export const useAddReaction = () => {
 
 // Custom hook for getting reaction count
 export const useReactionCount = (contentId: number) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.learning.all, "reactions", contentId],
     queryFn: () => learningApi.getReactionCount(contentId),
-    staleTime: 1 * 60 * 1000, // 1 minute
-    gcTime: 5 * 60 * 1000, // 5 minutes
-    enabled: !!contentId,
+    // staleTime: 1 * 60 * 1000, // 1 minute (temporarily disabled caching)
+    // gcTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    enabled: authReady && !!contentId,
   });
 };
 
@@ -201,12 +218,20 @@ export const useToggleFavoriteLearningContent = () => {
 };
 
 // Custom hook for getting saved articles
-export const useSavedArticles = ({page, perPage}: {page: number, perPage: number}) => {
+export const useSavedArticles = ({
+  page,
+  perPage,
+}: {
+  page: number;
+  perPage: number;
+}) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.learning.all, "saved", page, perPage],
     queryFn: () => learningApi.getSavedArticles(page, perPage),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
@@ -241,12 +266,20 @@ export const usePostArticle = () => {
 };
 
 // Custom hook for getting user's own articles
-export const useUserArticles = ({page, perPage}: {page: number, perPage: number}) => {
+export const useUserArticles = ({
+  page,
+  perPage,
+}: {
+  page: number;
+  perPage: number;
+}) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.learning.all, "user-articles", page, perPage],
     queryFn: () => learningApi.getUserArticles(page, perPage),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
@@ -274,10 +307,11 @@ export const useDeleteArticle = () => {
 
 // Custom hook for getting comments
 export const useComments = (contentId: number, enabled: boolean = true) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.learning.all, "comments", contentId],
     queryFn: () => learningApi.getComments(contentId),
-    staleTime: 1 * 60 * 1000, // 1 minutes
-    enabled: !!contentId && enabled,
+    // staleTime: 1 * 60 * 1000, // 1 minute (temporarily disabled caching)
+    enabled: authReady && !!contentId && enabled,
   });
 };

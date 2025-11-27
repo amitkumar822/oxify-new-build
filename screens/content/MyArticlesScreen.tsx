@@ -22,7 +22,7 @@ import {
   useToggleFavoriteLearningContent,
   useSavedArticles,
   useDeleteArticle,
-} from "@/hooks/useLearning";
+} from "@/hooks_main/useLearning";
 
 const perPage = 10;
 

@@ -15,9 +15,9 @@ import { Image } from "expo-image";
 import QuotesSwiper from "./quotesSwiper/QuotesSwiper";
 import { GradientLine } from "@/components/common/GradientLine";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLongestStreak } from "@/hooks/useSession";
-import { useNotificationCount } from "@/hooks/useNotification";
-import { useProfile } from "@/hooks/useProfile";
+import { useLongestStreak } from "@/hooks_main/useSession";
+import { useNotificationCount } from "@/hooks_main/useNotification";
+import { useProfile } from "@/hooks_main/useProfile";
 import SetReminderBottomSheet from "@/components/common/SetReminderBottomSheet";
 import { useAuth } from "@/contexts/AuthContext";
 const { useFocusEffect } = require("@react-navigation/native");
@@ -40,6 +40,9 @@ const getGreeting = (): string => {
 const DashboardScreen: React.FC = () => {
   const navigation: any = useNavigation();
 
+  const { isAuthenticated, isLoading } = useAuth();
+  const authReady = isAuthenticated && !isLoading;
+
   const { data: notificationCountResponse, refetch: refetchNotificationCount } =
     useNotificationCount();
   const { data: streakResponse } = useLongestStreak();
@@ -48,11 +51,20 @@ const DashboardScreen: React.FC = () => {
   // Reminder bottom sheet state
   const [isReminderSheetVisible, setIsReminderSheetVisible] = useState(false);
 
-  useFocusEffect(useCallback(() => {
-    // Refetch count whenever dashboard gains focus
-    refetchNotificationCount();
-  }, [refetchNotificationCount])
+  useFocusEffect(
+    useCallback(() => {
+      if (!authReady) return;
+      // Refetch count whenever dashboard gains focus
+      refetchNotificationCount();
+    }, [authReady, refetchNotificationCount])
   );
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // Refetch count whenever dashboard gains focus
+  //     refetchNotificationCount();
+  //   }, [refetchNotificationCount])
+  // );
 
   const notificationCount = Math.min(
     99,
@@ -81,7 +93,8 @@ const DashboardScreen: React.FC = () => {
       ]}
       style={styles.gradient}
     >
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      {/* <ScrollView className="flex-1" showsVerticalScrollIndicator={false}> */}
+      <View style={{ flex: 1 }}>
         <SafeAreaView style={{ flex: 1 }}>
           {/* Oxify Logo */}
           <View className="items-center" style={{ marginTop: -10 }}>
@@ -97,7 +110,6 @@ const DashboardScreen: React.FC = () => {
               />
             </View>
           </View>
-
 
           {/* Greeting */}
           <View className="flex-row items-center justify-between mb-[23px]">
@@ -122,7 +134,6 @@ const DashboardScreen: React.FC = () => {
               </Text>
             </View>
             <View className="flex-row items-center space-x-4">
-
               {/* Notifications */}
               <View style={{ position: "relative", paddingRight: 10 }}>
                 <Ionicons
@@ -303,7 +314,9 @@ const DashboardScreen: React.FC = () => {
                   fontFamily: "InterSemiBold",
                   marginBottom: 1,
                 }}
-              > Recovery Boost
+              >
+                {" "}
+                Recovery Boost
               </Text>
               <Text
                 style={{
@@ -354,14 +367,8 @@ const DashboardScreen: React.FC = () => {
               onPress={() => navigation.navigate(SCREEN_NAMES.SESSION_DETAILS)}
               style={styles.bottomMenuItem}
             >
-              <MaterialIcons
-                name="history"
-                size={28}
-                color="#6189AD"
-              />
-              <Text
-                style={styles.bottomMenuItemText}
-              >
+              <MaterialIcons name="history" size={28} color="#6189AD" />
+              <Text style={styles.bottomMenuItemText}>
                 {`Recent ${"\n"} Sessions`}
               </Text>
             </TouchableOpacity>
@@ -375,14 +382,8 @@ const DashboardScreen: React.FC = () => {
               }
               style={styles.bottomMenuItem}
             >
-              <Ionicons
-                name="star-outline"
-                size={24}
-                color="#6189AD"
-              />
-              <Text
-                style={styles.bottomMenuItemText}
-              >
+              <Ionicons name="star-outline" size={24} color="#6189AD" />
+              <Text style={styles.bottomMenuItemText}>
                 {`Saved ${"\n"} Protocols`}
               </Text>
             </TouchableOpacity>
@@ -394,14 +395,8 @@ const DashboardScreen: React.FC = () => {
               }
               style={styles.bottomMenuItem}
             >
-              <Ionicons
-                size={23.5}
-                name="newspaper-outline"
-                color="#6189AD"
-              />
-              <Text
-                style={styles.bottomMenuItemText}
-              >
+              <Ionicons size={23.5} name="newspaper-outline" color="#6189AD" />
+              <Text style={styles.bottomMenuItemText}>
                 {`Explore ${"\n"} Articles`}
               </Text>
             </TouchableOpacity>
@@ -411,20 +406,15 @@ const DashboardScreen: React.FC = () => {
               onPress={() => setIsReminderSheetVisible(true)}
               style={styles.bottomMenuItem}
             >
-              <Ionicons
-                name="alarm-outline"
-                size={24}
-                color="#6189AD"
-              />
-              <Text
-                style={styles.bottomMenuItemText}
-              >
+              <Ionicons name="alarm-outline" size={24} color="#6189AD" />
+              <Text style={styles.bottomMenuItemText}>
                 {` Set ${"\n"} Reminder`}
               </Text>
             </TouchableOpacity>
           </View>
         </SafeAreaView>
-      </ScrollView>
+      </View>
+      {/* </ScrollView> */}
 
       {/* Set Reminder Bottom Sheet */}
       <SetReminderBottomSheet

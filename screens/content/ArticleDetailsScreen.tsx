@@ -14,7 +14,7 @@ import { TEXT_SIZES } from "@/constants/textSizes";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import ArticleCard from "../../components/content/ArticleCard";
 import { learningApi } from "@/api/learning";
-import { useToggleFavoriteLearningContent } from "@/hooks/useLearning";
+import { useToggleFavoriteLearningContent } from "@/hooks_main/useLearning";
 const { useNavigation, useRoute } = require("@react-navigation/native");
 
 const ArticleDetailsScreen: React.FC = () => {

@@ -2,7 +2,7 @@ import { Theme } from "@/constants";
 import React, { useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import { useQuote } from "@/hooks/useSession";
+import { useQuote } from "@/hooks_main/useSession";
 
 
 export default function QuotesSwiper() {

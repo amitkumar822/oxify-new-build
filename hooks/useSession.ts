@@ -2,14 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { sessionApi } from "../api/session";
 import { queryKeys } from "../config/queryClient";
 import { showToast } from "../config";
+import { useAuthReady } from "./useAuthReady";
 
 // Custom hook for getting user sessions
 export const useUserSessions = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: queryKeys.sessions.lists(),
     queryFn: sessionApi.getSessions,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
@@ -21,32 +24,37 @@ export const useFilteredSessions = (params: {
   duration_end_time?: number;
   created_at?: string;
 }) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.lists(), "filtered", params],
     queryFn: () => sessionApi.getSessionsFiltered(params),
-    staleTime: 1 * 60 * 1000,
-    gcTime: 5 * 60 * 1000,
-    enabled: false,
+    // staleTime: 1 * 60 * 1000, // temporarily disabled caching
+    // gcTime: 5 * 60 * 1000, // temporarily disabled caching
+    enabled: authReady && false,
   });
 };
 
 // Custom hook for getting longest streak
 export const useLongestStreak = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.all, "longest-streak"],
     queryFn: sessionApi.getLongestStreak,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
 // Custom hook for getting streak freeze count
 export const useStreakFreeze = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.all, "streak-freeze"],
     queryFn: sessionApi.getStreakFreeze,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
@@ -76,41 +84,49 @@ export const useUseStreakFreeze = () => {
 
 // Custom hook for getting current month session dates
 export const useCurrentMonthSessionDates = (year: number, month: number) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.all, "current-month-dates", year, month],
     queryFn: () => sessionApi.getCurrentMonthSessionDates(year, month),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
 // Custom hook for getting user ATA history
 export const useUserAtaHistory = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.all, "ata-history"],
     queryFn: sessionApi.getUserAtaHistory,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
 // Custom hook for getting user milestone badges
 export const useUserMilestoneBadges = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.all, "milestone-badges"],
     queryFn: sessionApi.getUserMilestoneBadges,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 
 // Quote image
 export const useQuote = (date?: string) => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: ["quote", date],
     queryFn: () => sessionApi.getQuote(date),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    // staleTime: 5 * 60 * 1000, // temporarily disabled caching
+    // gcTime: 10 * 60 * 1000, // temporarily disabled caching
+    enabled: authReady,
   });
 };
 
@@ -129,10 +145,12 @@ export const useUpdateProfile = () => {
 
 // Get daily and weekly sessions for current month
 export const useUserDailyWeeklySessions = () => {
+  const authReady = useAuthReady();
   return useQuery({
     queryKey: [...queryKeys.sessions.all, "daily-weekly"],
     queryFn: sessionApi.getUserDailyWeeklySessions,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
+    enabled: authReady,
   });
 };
 

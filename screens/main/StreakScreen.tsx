@@ -22,7 +22,7 @@ import {
   useLongestStreak,
   useStreakFreeze,
   useUseStreakFreeze,
-} from "@/hooks/useSession";
+} from "@/hooks_main/useSession";
 
 
 const RewardCard = ({

@@ -7,6 +7,8 @@ import {
   TextInput,
   Platform,
   StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SCREEN_NAMES, Theme } from "../../constants";
@@ -197,15 +199,15 @@ const SessionSetupScreen: React.FC = () => {
 
         const ataList: AtaOption[] = Array.isArray(first.max_ata_level)
           ? first.max_ata_level.map((m: any) => ({
-            id: m.id,
-            level: String(m.level),
-          }))
+              id: m.id,
+              level: String(m.level),
+            }))
           : [];
         const protocolsList: Protocol[] = Array.isArray(first.protocol)
           ? first.protocol.map((p: any) => ({
-            protocol: p.id,
-            name: String(p.name),
-          }))
+              protocol: p.id,
+              name: String(p.name),
+            }))
           : [];
 
         if (!isMounted) return;
@@ -256,201 +258,206 @@ const SessionSetupScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={[
-        "#243551",
-        "#242D3C",
-        "#14181B",
-      ]}
+      colors={["#243551", "#242D3C", "#14181B"]}
       style={styles.gradient}
     >
       <SafeAreaView style={{ flex: 1 }}>
         <AppStatusBar barStyle="light-content" />
-        <View className="flex-1 pt-3">
-          {/* Header */}
-          <ShadowHeader
-            title="Session Tracking"
-            onPress={() => navigation.navigate("TabNavigator")}
-          />
-
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            className="flex-1"
-          >
-            <View className="mb-4 px-4">
-              <DropdownSelect
-                label="Choose your ATA Level"
-                value={ataLevel}
-                placeholder="Select ATA Level"
-                options={ataOptions.map((opt) => ({
-                  label: opt.level,
-                  value: opt.level,
-                  meta: opt,
-                }))}
-                onSelect={(option) => {
-                  setAtaLevel(String(option.value));
-                  setSelectedAtaId(option.meta?.id ?? null);
-                }}
-              />
-            </View>
-
-            <View className="mb-6 px-4">
-              <Text
-                className="mb-2.5"
-                style={{ color: Theme.text.neutral, fontSize: 16, fontFamily: "InterMedium" }}
-              >
-                Duration
-              </Text>
-              <View className="flex-row items-center justify-between">
-                <SwipeNumberInput
-                  label="Minutes"
-                  value={minutes}
-                  onIncrement={() => {
-                    const newValue = Math.min(59, getMinutesNumber() + 1);
-                    const formatted = formatTime(newValue);
-                    setMinutes(formatted);
-                    validateDuration(formatted, seconds);
-                  }}
-                  onDecrement={() => {
-                    const newValue = Math.max(0, getMinutesNumber() - 1);
-                    const formatted = formatTime(newValue);
-                    setMinutes(formatted);
-                    validateDuration(formatted, seconds);
-                  }}
-                  onChangeValue={handleMinutesInputChange}
-                />
-                <Text
-                  style={{
-                    fontSize: TEXT_SIZES.md,
-                    color: Theme.text.neutral,
-                    paddingHorizontal: 8,
-                  }}
-                >
-                  :
-                </Text>
-                <SwipeNumberInput
-                  label="Seconds"
-                  value={seconds}
-                  onIncrement={() => {
-                    const newValue = Math.min(59, getSecondsNumber() + 1);
-                    const formatted = formatTime(newValue);
-                    setSeconds(formatted);
-                    validateDuration(minutes, formatted);
-                  }}
-                  onDecrement={() => {
-                    const newValue = Math.max(0, getSecondsNumber() - 1);
-                    const formatted = formatTime(newValue);
-                    setSeconds(formatted);
-                    validateDuration(minutes, formatted);
-                  }}
-                  onChangeValue={handleSecondsInputChange}
-                />
-              </View>
-              {durationError && (
-                <Text
-                  style={{
-                    color: "#f87171",
-                    fontSize: TEXT_SIZES.sm,
-                    marginBottom: 6,
-                  }}
-                >
-                  {durationError}
-                </Text>
-              )}
-            </View>
-
-            <SessionSlider
-              initialIndex={moodIndex}
-              onValueChange={(index) => setMoodIndex(index)}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View className="flex-1 pt-3">
+            {/* Header */}
+            <ShadowHeader
+              title="Session Tracking"
+              onPress={() => navigation.navigate("TabNavigator")}
             />
 
-            {/* Purpose of Session */}
-            <View className="mb-6 px-4 pt-3">
-              <DropdownSelect
-                label="Purpose of Session"
-                value={selectedProtocol?.name}
-                placeholder="Select from saved protocols"
-                options={apiProtocols.map((protocol) => ({
-                  label: protocol.name,
-                  value: protocol.protocol,
-                  meta: protocol,
-                }))}
-                onSelect={(option) => {
-                  setSelectedProtocol(option.meta ?? null);
-                }}
-              />
-            </View>
+            {/* <ScrollView
+            showsVerticalScrollIndicator={false}
+            className="flex-1"
+          > */}
+            <View style={{ flex: 1 }}>
+              <View className="mb-4 px-4">
+                <DropdownSelect
+                  label="Choose your ATA Level"
+                  value={ataLevel}
+                  placeholder="Select ATA Level"
+                  options={ataOptions.map((opt) => ({
+                    label: opt.level,
+                    value: opt.level,
+                    meta: opt,
+                  }))}
+                  onSelect={(option) => {
+                    setAtaLevel(String(option.value));
+                    setSelectedAtaId(option.meta?.id ?? null);
+                  }}
+                />
+              </View>
 
-            {/* Notes */}
-            <View className="mb-6 px-4">
-              <Text
-                className="text-[#DDE2E5] mb-2"
-                style={{
-                  fontSize: 16,
-                  fontFamily: "InterMedium",
-                }}
-              >
-                Notes
-              </Text>
-              <TextInput
-                className="bg-white text-gray-900"
-                placeholder="Add session description (optional)"
-                placeholderTextColor="#797979"
-                multiline
-                textAlignVertical="top"
-                value={notes}
-                onChangeText={setNotes}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#8BAFCE",
-                  borderRadius: 16,
-                  fontSize: 14,
-                  fontFamily: "InterRegular",
-                  paddingVertical: RFValue(8),
-                  paddingHorizontal: RFValue(12),
-                  minHeight: RFValue(75),
-                  maxHeight: RFValue(95),
-                }}
-              />
-            </View>
-          </ScrollView>
+              <View className="mb-6 px-4">
+                <Text
+                  className="mb-2.5"
+                  style={{
+                    color: Theme.text.neutral,
+                    fontSize: 16,
+                    fontFamily: "InterMedium",
+                  }}
+                >
+                  Duration
+                </Text>
+                <View className="flex-row items-center justify-between">
+                  <SwipeNumberInput
+                    label="Minutes"
+                    value={minutes}
+                    onIncrement={() => {
+                      const newValue = Math.min(59, getMinutesNumber() + 1);
+                      const formatted = formatTime(newValue);
+                      setMinutes(formatted);
+                      validateDuration(formatted, seconds);
+                    }}
+                    onDecrement={() => {
+                      const newValue = Math.max(0, getMinutesNumber() - 1);
+                      const formatted = formatTime(newValue);
+                      setMinutes(formatted);
+                      validateDuration(formatted, seconds);
+                    }}
+                    onChangeValue={handleMinutesInputChange}
+                  />
+                  <Text
+                    style={{
+                      fontSize: TEXT_SIZES.md,
+                      color: Theme.text.neutral,
+                      paddingHorizontal: 8,
+                    }}
+                  >
+                    :
+                  </Text>
+                  <SwipeNumberInput
+                    label="Seconds"
+                    value={seconds}
+                    onIncrement={() => {
+                      const newValue = Math.min(59, getSecondsNumber() + 1);
+                      const formatted = formatTime(newValue);
+                      setSeconds(formatted);
+                      validateDuration(minutes, formatted);
+                    }}
+                    onDecrement={() => {
+                      const newValue = Math.max(0, getSecondsNumber() - 1);
+                      const formatted = formatTime(newValue);
+                      setSeconds(formatted);
+                      validateDuration(minutes, formatted);
+                    }}
+                    onChangeValue={handleSecondsInputChange}
+                  />
+                </View>
+                {durationError && (
+                  <Text
+                    style={{
+                      color: "#f87171",
+                      fontSize: TEXT_SIZES.sm,
+                      marginBottom: 6,
+                    }}
+                  >
+                    {durationError}
+                  </Text>
+                )}
+              </View>
 
-          <View
-            style={{
-              // paddingBottom: Platform.OS === "ios" ? 20 : 16,
-              paddingTop: 8,
-              paddingHorizontal: 16,
-              // backgroundColor: "#14181B",
-            }}
-          >
-            <TouchableOpacity
-              className={`rounded-full py-4 px-6 flex-row gap-4 items-center justify-center ${selectedProtocol &&
+              <SessionSlider
+                initialIndex={moodIndex}
+                onValueChange={(index) => setMoodIndex(index)}
+              />
+
+              {/* Purpose of Session */}
+              <View className="mb-6 px-4 pt-3">
+                <DropdownSelect
+                  label="Purpose of Session"
+                  value={selectedProtocol?.name}
+                  placeholder="Select from saved protocols"
+                  options={apiProtocols.map((protocol) => ({
+                    label: protocol.name,
+                    value: protocol.protocol,
+                    meta: protocol,
+                  }))}
+                  onSelect={(option) => {
+                    setSelectedProtocol(option.meta ?? null);
+                  }}
+                />
+              </View>
+
+              {/* Notes */}
+              <View className="mb-6 px-4">
+                <Text
+                  className="text-[#DDE2E5] mb-2"
+                  style={{
+                    fontSize: 16,
+                    fontFamily: "InterMedium",
+                  }}
+                >
+                  Notes
+                </Text>
+                <TextInput
+                  className="bg-white text-gray-900"
+                  placeholder="Add session description (optional)"
+                  placeholderTextColor="#797979"
+                  multiline
+                  textAlignVertical="top"
+                  value={notes}
+                  onChangeText={setNotes}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: "#8BAFCE",
+                    borderRadius: 16,
+                    fontSize: 14,
+                    fontFamily: "InterRegular",
+                    paddingVertical: RFValue(8),
+                    paddingHorizontal: RFValue(12),
+                    minHeight: RFValue(75),
+                    maxHeight: RFValue(95),
+                  }}
+                />
+              </View>
+            </View>
+            {/* </ScrollView> */}
+
+            <View
+              style={{
+                // paddingBottom: Platform.OS === "ios" ? 20 : 16,
+                paddingTop: 8,
+                paddingHorizontal: 16,
+                // backgroundColor: "#14181B",
+              }}
+            >
+              <TouchableOpacity
+                className={`rounded-full py-4 px-6 flex-row gap-4 items-center justify-center ${
+                  selectedProtocol &&
                   ataLevel &&
                   (getMinutesNumber() > 0 || getSecondsNumber() > 0) &&
                   !durationError
-                  ? "bg-blue-500"
-                  : "bg-[#6189AD]"
+                    ? "bg-blue-500"
+                    : "bg-[#6189AD]"
                 }`}
-              onPress={handleStartSession}
-              disabled={
-                !selectedProtocol ||
-                !ataLevel ||
-                (getMinutesNumber() === 0 && getSecondsNumber() === 0) ||
-                Boolean(durationError)
-              }
-            >
-              <Foundation name="play" size={RFValue(24)} color="#DDE2E5" />
-              <Text
-                className="text-[#DDE2E5]"
-                style={{
-                  fontSize: TEXT_SIZES.md,
-                  fontWeight: 600,
-                }}
+                onPress={handleStartSession}
+                disabled={
+                  !selectedProtocol ||
+                  !ataLevel ||
+                  (getMinutesNumber() === 0 && getSecondsNumber() === 0) ||
+                  Boolean(durationError)
+                }
               >
-                Start Session
-              </Text>
-            </TouchableOpacity>
+                <Foundation name="play" size={RFValue(24)} color="#DDE2E5" />
+                <Text
+                  className="text-[#DDE2E5]"
+                  style={{
+                    fontSize: TEXT_SIZES.md,
+                    fontWeight: 600,
+                  }}
+                >
+                  Start Session
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -462,8 +469,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  hiddenInput: {
-    position: "absolute",
+  hiddenInput: { position: "absolute",
     opacity: 0,
     height: 0,
     width: 0,

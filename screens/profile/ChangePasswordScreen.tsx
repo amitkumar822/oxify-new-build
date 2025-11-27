@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 const { useNavigation } = require("@react-navigation/native");
-import { useChangePassword, useProfile } from "../../hooks/useProfile";
+import { useChangePassword, useProfile } from "../../hooks_main/useProfile";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppStatusBar } from "../../helpers/AppStatusBar";
 import { TEXT_SIZES } from "@/constants/textSizes";

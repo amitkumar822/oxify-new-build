@@ -13,7 +13,7 @@ import { AppStatusBar } from "../../helpers/AppStatusBar";
 import { SCREEN_NAMES, Theme } from "../../constants";
 import { Image } from "react-native";
 import { Dimensions } from "react-native";
-import { useUserMilestoneBadges } from "../../hooks/useSession";
+import { useUserMilestoneBadges } from "../../hooks_main/useSession";
 import ShadowHeader from "@/components/common/ShadowHeader";
 
 const { width } = Dimensions.get("window");

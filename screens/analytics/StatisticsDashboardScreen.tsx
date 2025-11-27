@@ -21,11 +21,11 @@ import {
   useCurrentMonthSessionDates,
   useUserAtaHistory,
   useUserDailyWeeklySessions,
-} from "@/hooks/useSession";
+} from "@/hooks_main/useSession";
 import {
   useUserSessionProtocols,
   useUserSessionAtaLevels,
-} from "@/hooks/useProtocol";
+} from "@/hooks_main/useProtocol";
 import { RFValue } from "react-native-responsive-fontsize";
 import { screenWidth } from "@/constants/comman";
 import { useAuth } from "../../contexts/AuthContext";
