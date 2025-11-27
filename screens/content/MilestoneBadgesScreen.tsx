@@ -27,6 +27,7 @@ const MilestoneBadgesScreen: React.FC = () => {
   } = useUserMilestoneBadges();
 
   // Extract milestone data from API response
+  // @ts-ignore
   const milestoneBadges = milestoneResponse?.data?.data || [];
   return (
     <LinearGradient
@@ -61,12 +62,12 @@ const MilestoneBadgesScreen: React.FC = () => {
                 </Text>
               </View>
             ) : (
-              <View className="flex-row flex-wrap gap-5">
+              <View className="flex-row flex-wrap justify-around">
                 {milestoneBadges.map((badge: any, idx: number) => (
                   // <View key={idx} className="w-1/3 mb-4">
                   <View
                     key={idx}
-                    className="bg-[#14181B] rounded-2xl items-center py-2 px-[14px] justify-center"
+                    className="bg-[#14181B] rounded-2xl items-center py-2 px-[14px] justify-center mb-4"
                   >
                     {/* Icon placeholder */}
                     <View className=" p-2 bg-[#454F5E] rounded-full m-2">

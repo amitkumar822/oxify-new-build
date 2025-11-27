@@ -5,15 +5,15 @@ const { useNavigation, useRoute } = require("@react-navigation/native");
 import { Theme } from "../../constants";
 import { RFValue } from "react-native-responsive-fontsize";
 import { TEXT_SIZES } from "../../constants/textSizes";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Alert } from "react-native";
 import { getChamberId } from "@/utils/tokenManager";
 import { sessionApi, CreateSessionData } from "@/api/session";
 import { showToast } from "@/config";
 import { AppStatusBar } from "@/helpers/AppStatusBar";
 import SessionSlider from "@/components/content/sessionSlider";
 import ShadowHeader from "@/components/common/ShadowHeader";
+import { SessionAlertModal } from "./helper";
 
 interface RouteParams {
   sessionData: {
@@ -43,6 +43,7 @@ const SessionCompletedScreen: React.FC = () => {
 
   const [moodIndex, setMoodIndex] = useState(2);
   const [notes, setNotes] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Mood configuration with scalable structure - EXACT same as SessionSetupScreen
   const moodConfig: MoodConfig[] = [
@@ -110,20 +111,8 @@ const SessionCompletedScreen: React.FC = () => {
       };
 
       const res = await sessionApi.createSession(payload);
-      if (res?.success && (res.data as any)?.statusCode === 201) {
-        Alert.alert("Success", "User session created successfully", [
-          {
-            text: "OK",
-            onPress: () => navigation.replace("TabNavigator"),
-          },
-        ]);
-      } else if (res?.success) {
-        Alert.alert("Success", "User session created successfully", [
-          {
-            text: "OK",
-            onPress: () => navigation.replace("TabNavigator"),
-          },
-        ]);
+      if (res?.success) {
+        setShowSuccessModal(true);
       } else {
         showToast.error(res?.error || "Failed to save session");
       }
@@ -134,11 +123,7 @@ const SessionCompletedScreen: React.FC = () => {
 
   return (
     <LinearGradient
-      colors={[
-        "#243551",
-        "#242D3C",
-        "#14181B",
-      ]}
+      colors={["#243551", "#242D3C", "#14181B"]}
       style={styles.gradient}
     >
       <SafeAreaView style={{ flex: 1 }}>
@@ -162,7 +147,11 @@ const SessionCompletedScreen: React.FC = () => {
             <View className="mb-8 px-4 mt-6">
               <Text
                 className="mb-4"
-                style={{ color: Theme.text.neutral, fontSize: 16, fontFamily: "InterMedium" }}
+                style={{
+                  color: Theme.text.neutral,
+                  fontSize: 16,
+                  fontFamily: "InterMedium",
+                }}
               >
                 Notes (optional)
               </Text>
@@ -195,11 +184,7 @@ const SessionCompletedScreen: React.FC = () => {
                 borderRadius: 100,
               }}
             >
-              <FontAwesome5
-                name="flag-checkered"
-                size={20}
-                color="#EB4335"
-              />
+              <FontAwesome5 name="flag-checkered" size={20} color="#EB4335" />
               <Text
                 className="ml-3"
                 style={{
@@ -212,6 +197,14 @@ const SessionCompletedScreen: React.FC = () => {
               </Text>
             </TouchableOpacity>
           </View>
+          <SessionAlertModal
+            visible={showSuccessModal}
+            onRequestClose={() => setShowSuccessModal(false)}
+            onConfirm={() => {
+              setShowSuccessModal(false);
+              navigation.replace("TabNavigator");
+            }}
+          />
         </View>
       </SafeAreaView>
     </LinearGradient>

@@ -53,27 +53,25 @@ const Dropdown: React.FC<DropdownProps> = ({
           style={{ maxHeight: 200 }}
         >
           {options.map((option) => (
-            <View
+            <TouchableOpacity
+              onPress={() => {
+                onSelect(option);
+                onClose();
+              }}
               key={option.id}
-              className="flex-row items-center justify-between px-3 py-2 border-b border-white/10 last:border-b-0"
             >
-              <TouchableOpacity
-                onPress={() => {
-                  onSelect(option);
-                  onClose();
-                }}
-              >
+              <View className="flex-row items-center justify-between px-3 py-2 border-b border-white/10 last:border-b-0">
                 <Text
                   className={`text-white ${title === "Protocols" ? "text-left" : "text-center"}`}
                   style={{ fontSize: 14, fontFamily: "InterRegular" }}
                 >
                   {capitalizeFirst(option.name as string)}
                 </Text>
-              </TouchableOpacity>
-              {option.name === selectedValue && (
-                <AntDesign name="check" size={12} color="white" />
-              )}
-            </View>
+                {option.name === selectedValue && (
+                  <AntDesign name="check" size={12} color="white" />
+                )}
+              </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>

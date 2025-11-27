@@ -88,10 +88,10 @@ const DashboardScreen: React.FC = () => {
             <View className="flex-row items-center mb-[23px]">
               <Image
                 source={require("../../assets/images/oxify_logo_with_name.png")}
+                contentFit="contain"
                 style={{
                   width: 124,
                   height: 41,
-                  resizeMode: "contain",
                   marginRight: 6,
                 }}
               />
