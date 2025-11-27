@@ -89,7 +89,7 @@ const EditGenderScreen: React.FC = () => {
     >
       <SafeAreaView className="flex-1">
         <AppStatusBar barStyle="light-content" />
-        <View className="flex-1 px-4 py-4">
+        <View className="flex-1 px-4 py-4 pb-[100px]">
           {/* Header */}
           <View className="flex-row items-center mb-6">
             <TouchableOpacity
@@ -142,7 +142,7 @@ const EditGenderScreen: React.FC = () => {
               className={`rounded-[36px] py-4 items-center h-[54px] ${
                 isLoading ? "opacity-50" : ""
               }`}
-              style={{ backgroundColor: "#6189AD",paddingVertical: 16 }}
+              style={{ backgroundColor: "#6189AD", paddingVertical: 16 }}
               onPress={handleSave}
               disabled={isLoading}
             >
