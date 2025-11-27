@@ -3,14 +3,14 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   TextInput,
-  ScrollView,
   Animated,
   ImageBackground,
   Easing,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 // @ts-ignore
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -22,7 +22,7 @@ import { AppStatusBar } from "@/helpers/AppStatusBar";
 import { BackHeader } from "@/helpers/BackHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TEXT_SIZES } from "@/constants/textSizes";
-import { hp, wp } from "@/constants/screenWH";
+import { wp } from "@/constants/screenWH";
 import Buttons from "@/components/common/Buttons";
 import { Feather } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -116,97 +116,98 @@ const SignupEmailVerificationScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <AppStatusBar barStyle="light-content" backgroundColor="transparent" />
-
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background1.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          {/* Back button */}
-          <BackHeader title="Back" handleBack={handleBack} />
-
-          {/* Keyboard avoiding for input fields */}
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            enabled={true}
+      <AppStatusBar barStyle="light-content" backgroundColor="transparent" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-              <View style={styles.iconSection}>
-                <Feather name="mail" size={RFValue(25)} color="white" />
-              </View>
+            <ImageBackground
+              source={require("@/assets/images/background1.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
 
-              <Text style={styles.mainTitle}>Verify Your Email</Text>
-              <Text style={styles.subtitle}>
-                We've sent a 6-digit verification code to{"\n"}
-                <Text style={styles.emailText}>{email}</Text>
-              </Text>
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            {/* Back button */}
+            <BackHeader title="Back" handleBack={handleBack} />
 
-              <View style={styles.inputWrap}>
-                <TextInput
-                  style={[styles.inputBox, error && styles.inputError]}
-                  onChangeText={(text) => {
-                    setVerificationCode(text);
-                    if (error) setError("");
-                  }}
-                  value={verificationCode}
-                  placeholder="Enter 6-digit code"
-                  placeholderTextColor="#797979"
-                  keyboardType="numeric"
-                  maxLength={6}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                {error && <Text style={styles.errText}>{error}</Text>}
-              </View>
+            {/* Keyboard avoiding for input fields */}
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                <View style={styles.iconSection}>
+                  <Feather name="mail" size={RFValue(25)} color="white" />
+                </View>
 
-              <View style={styles.resendSection}>
-                <Text style={styles.resendText}>Didn't get the code? </Text>
-                <Text style={styles.resendLink} onPress={handleResendCode}>
-                  Resend
+                <Text style={styles.mainTitle}>Verify Your Email</Text>
+                <Text style={styles.subtitle}>
+                  We've sent a 6-digit verification code to{"\n"}
+                  <Text style={styles.emailText}>{email}</Text>
                 </Text>
-              </View>
-            </View>
 
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Verify Email"
-                isLoading={submitting}
-                style={{   
-                  backgroundColor:
-                    !verificationCode.trim() || submitting
-                      ? "#b9b1b1"
-                      : "rgba(221, 226, 229, 1)",
-                  borderRadius: 14,
-                  // marginBottom: 16
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+                <View style={styles.inputWrap}>
+                  <TextInput
+                    style={[styles.inputBox, error && styles.inputError]}
+                    onChangeText={(text) => {
+                      setVerificationCode(text);
+                      if (error) setError("");
+                    }}
+                    value={verificationCode}
+                    placeholder="Enter 6-digit code"
+                    placeholderTextColor="#797979"
+                    keyboardType="numeric"
+                    maxLength={6}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                  />
+                  {error && <Text style={styles.errText}>{error}</Text>}
+                </View>
+
+                <View style={styles.resendSection}>
+                  <Text style={styles.resendText}>Didn't get the code? </Text>
+                  <Text style={styles.resendLink} onPress={handleResendCode}>
+                    Resend
+                  </Text>
+                </View>
+              </View>
+
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Verify Email"
+                  isLoading={submitting}
+                  style={{
+                    backgroundColor:
+                      !verificationCode.trim() || submitting
+                        ? "#b9b1b1"
+                        : "rgba(221, 226, 229, 1)",
+                    borderRadius: 14,
+                    // marginBottom: 16
+                  }}
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

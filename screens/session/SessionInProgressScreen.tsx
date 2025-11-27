@@ -9,7 +9,6 @@ import {
   ImageBackground,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import AntDesign from "@expo/vector-icons/AntDesign";
 const { useNavigation, useRoute } = require("@react-navigation/native");
 import { SCREEN_NAMES, Theme } from "../../constants";
 import { Image } from "expo-image";
@@ -19,8 +18,6 @@ import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RFValue } from "react-native-responsive-fontsize";
 import { AppStatusBar } from "@/helpers/AppStatusBar";
-import { useAudioPlayer } from 'expo-audio';
-const alarmClockSound = require('@/assets/audio/alarm_clock.mp3');
 
 interface RouteParams {
   sessionData?: {
@@ -40,8 +37,6 @@ const SessionInProgressScreen: React.FC = () => {
   const navigation: any = useNavigation();
   const route = useRoute();
   const { sessionData } = (route.params as RouteParams) || {};
-
-  const player = useAudioPlayer(alarmClockSound);
 
   // If sessionData not provided → default 1 min
   const defaultMinutes = sessionData?.durationMinutes ?? 1;
@@ -75,8 +70,7 @@ const SessionInProgressScreen: React.FC = () => {
             setIsActive(false);
             setIsPaused(false);
             setIsFinished(true);
-            setSmoothProgress(0); // Set smooth progress to exactly 0 wh    sen finished
-            player.play();
+            setSmoothProgress(0);
             return 0;
           }
           return prev - 1;
@@ -147,7 +141,6 @@ const SessionInProgressScreen: React.FC = () => {
   const progressColor = "#2398F7";
 
   const handleFinishSession = () => {
-    player.pause();
     navigation.navigate(SCREEN_NAMES.SESSION_COMPLETED, {
       sessionData,
     });
@@ -290,18 +283,32 @@ const SessionInProgressScreen: React.FC = () => {
             <View className="absolute inset-0 items-center justify-center">
               <Text
                 className="mb-2"
-                style={{ fontSize: 22, fontFamily: "InterMedium", color: Theme.text.neutral }}
+                style={{
+                  fontSize: 22,
+                  fontFamily: "InterMedium",
+                  color: Theme.text.neutral,
+                }}
                 // style={{ color: Theme.text.neutral }}
               >
                 {isFinished ? "Finished" : isPaused ? "Paused" : "In Progress"}
               </Text>
               <Text
                 className=" mb-2"
-                style={{ color: Theme.text.neutral, fontSize: 50, fontFamily: "InterMedium" }}
+                style={{
+                  color: Theme.text.neutral,
+                  fontSize: 50,
+                  fontFamily: "InterMedium",
+                }}
               >
                 {formatTime(timeLeft)}
               </Text>
-              <Text style={{ color: Theme.text.neutral, fontSize: 18, fontFamily: "InterMedium" }}>
+              <Text
+                style={{
+                  color: Theme.text.neutral,
+                  fontSize: 18,
+                  fontFamily: "InterMedium",
+                }}
+              >
                 Goal:{" "}
                 {Math.floor(currentGoalDuration / 60)
                   .toString()

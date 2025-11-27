@@ -10,6 +10,8 @@ import {
   Animated,
   ImageBackground,
   Easing,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 const { useNavigation, useRoute } = require("@react-navigation/native");
 import { SCREEN_NAMES, Theme } from "../../constants";
@@ -78,7 +80,7 @@ const LoginPasswordScreen: React.FC = () => {
     setError("");
 
     try {
-      const response = await authApi.login(email, password) as any;
+      const response = (await authApi.login(email, password)) as any;
 
       if (response?.success) {
         try {
@@ -86,7 +88,10 @@ const LoginPasswordScreen: React.FC = () => {
 
           // Save push notification token
           if (expoPushToken?.data) {
-            await authApi.pushNotificationTokenSave(expoPushToken.data, Platform.OS == "ios" ? "ios" : "android");
+            await authApi.pushNotificationTokenSave(
+              expoPushToken.data,
+              Platform.OS == "ios" ? "ios" : "android"
+            );
           }
 
           const userData = {
@@ -97,7 +102,6 @@ const LoginPasswordScreen: React.FC = () => {
           };
           await storeUserData(userData);
           await login(userData);
-
 
           showToast.success("Login successful");
           navigation.replace("MainStack");
@@ -142,94 +146,94 @@ const LoginPasswordScreen: React.FC = () => {
       style={styles.gradient}
     >
       <AppStatusBar barStyle="light-content" />
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background1.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
+          >
+            <ImageBackground
+              source={require("@/assets/images/background1.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
 
-        {/* Back button */}
-        <BackHeader handleBack={() => navigation.goBack()} />
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-          enabled={true}
-        >
-          <View style={styles.contentContainer}>
-            <View style={styles.iconSection}>
-              <Ionicons
-                name="lock-closed-outline"
-                size={RFValue(24)}
-                color={Theme.text.neutral}
-                style={styles.lockIcon}
-              />
-            </View>
-
-            {/* Email Display */}
-            <Text style={styles.emailText}>Enter your password</Text>
-
-            {/* Password Field */}
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={[styles.input, error ? styles.inputError : null]}
-                placeholder="Enter Password"
-                placeholderTextColor="#797979"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  if (error) setError("");
-                }}
-              />
-              <TouchableOpacity
-                style={styles.eyeButton}
-                onPress={() => setShowPassword(!showPassword)}
-              >
+          {/* Back button */}
+          <BackHeader handleBack={() => navigation.goBack()} />
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+            enabled={true}
+          >
+            <View style={styles.contentContainer}>
+              <View style={styles.iconSection}>
                 <Ionicons
-                  name={showPassword ? "eye-outline" : "eye-off-outline"}
-                  size={22}
-                  color="#666"
+                  name="lock-closed-outline"
+                  size={RFValue(24)}
+                  color={Theme.text.neutral}
+                  style={styles.lockIcon}
                 />
+              </View>
+
+              {/* Email Display */}
+              <Text style={styles.emailText}>Enter your password</Text>
+
+              {/* Password Field */}
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={[styles.input, error ? styles.inputError : null]}
+                  placeholder="Enter Password"
+                  placeholderTextColor="#797979"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                    if (error) setError("");
+                  }}
+                />
+                <TouchableOpacity
+                  style={styles.eyeButton}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Ionicons
+                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    size={22}
+                    color="#666"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+
+              {/* Forgot Password */}
+              <TouchableOpacity onPress={handleForgotPassword}>
+                <Text style={styles.forgotPassword}>Forgot password?</Text>
               </TouchableOpacity>
             </View>
 
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-
-            {/* Forgot Password */}
-            <TouchableOpacity onPress={handleForgotPassword}>
-              <Text style={styles.forgotPassword}>Forgot password?</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Submit Button - Fixed position outside of any flex containers */}
-          <View style={[
-            styles.buttonContainer
-          ]}>
-            <Buttons
-              onPress={handleSignIn}
-              title={isLoading ? "Signing In..." : "Submit"}
-              isLoading={isLoading}
-              style={{
-                backgroundColor: !password.trim() ? "#b9b1b1" : "#F3F3F3",
-                borderRadius: 14,
-                marginBottom: 16
-              }}
-            />
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+            {/* Submit Button - Fixed position outside of any flex containers */}
+            <View style={[styles.buttonContainer]}>
+              <Buttons
+                onPress={handleSignIn}
+                title={isLoading ? "Signing In..." : "Submit"}
+                isLoading={isLoading}
+                style={{
+                  backgroundColor: !password.trim() ? "#b9b1b1" : "#F3F3F3",
+                  borderRadius: 14,
+                  marginBottom: 16,
+                }}
+              />
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

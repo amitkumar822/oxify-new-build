@@ -9,6 +9,8 @@ import {
   Animated,
   ImageBackground,
   Easing,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -22,9 +24,6 @@ import Buttons from "@/components/common/Buttons";
 import { RFValue } from "react-native-responsive-fontsize";
 import { animatedDuration, screenHeight } from "@/constants/comman";
 import useKeyboard from "@/utils/useKeyboard";
-
-// Username must be: lowercase, alphanumeric only, start with a letter
-const USERNAME_REGEX = /^[a-z][a-z0-9]*$/;
 
 const validateUsername = (value: string): string | null => {
   const u = value.trim();
@@ -65,6 +64,7 @@ const SignupUsernameScreen: React.FC = () => {
 
     // Validate locally before hitting the API
     const localError = validateUsername(trimmed);
+
     if (localError) {
       setIsAvailable(null);
       setError(localError);
@@ -183,94 +183,96 @@ const SignupUsernameScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: animatedTop,
-              left: animatedLeft,
-              width: animatedWidth,
-              height: animatedHeight,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background2.png")}
-            style={styles.backgroundImage}
-            resizeMode="cover"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          <BackHeader handleBack={handleBack} />
-
-          {/* Keyboard avoiding for input fields */}
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            enabled={true}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: animatedTop,
+                left: animatedLeft,
+                width: animatedWidth,
+                height: animatedHeight,
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-              <Text style={styles.icon}>@</Text>
-              <Text style={styles.title}>Choose a username</Text>
+            <ImageBackground
+              source={require("@/assets/images/background2.png")}
+              style={styles.backgroundImage}
+              resizeMode="cover"
+            />
+          </Animated.View>
 
-              <TextInput
-                style={[styles.input, error ? styles.inputError : null]}
-                placeholder="Username"
-                placeholderTextColor="#999"
-                value={username}
-                onChangeText={(text) => {
-                  // enforce lowercase on input
-                  const lower = text.toLowerCase();
-                  setUsername(lower);
-                  if (error) setError("");
-                }}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            <BackHeader handleBack={handleBack} />
 
-              {error ? (
-                <Text style={styles.error}>{error}</Text>
-              ) : checking ? (
-                <Text style={styles.hint}>Checking availability…</Text>
-              ) : isAvailable === true ? (
-                <Text style={styles.ok}>Username available</Text>
-              ) : null}
-            </View>
+            {/* Keyboard avoiding for input fields */}
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                <Text style={styles.icon}>@</Text>
+                <Text style={styles.title}>Choose a username</Text>
 
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Continue"
-                isLoading={submitting}
-                disabled={
-                  !!validateUsername(username.trim()) ||
-                  checking ||
-                  isAvailable === false
-                }
-                style={{
-                  backgroundColor:
+                <TextInput
+                  style={[styles.input, error ? styles.inputError : null]}
+                  placeholder="Username"
+                  placeholderTextColor="#999"
+                  value={username}
+                  onChangeText={(text) => {
+                    // enforce lowercase on input
+                    const lower = text.toLowerCase();
+                    setUsername(lower);
+                    if (error) setError("");
+                  }}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+
+                {error ? (
+                  <Text style={styles.error}>{error}</Text>
+                ) : checking ? (
+                  <Text style={styles.hint}>Checking availability…</Text>
+                ) : isAvailable === true ? (
+                  <Text style={styles.ok}>Username available</Text>
+                ) : null}
+              </View>
+
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Continue"
+                  isLoading={submitting}
+                  disabled={
                     !!validateUsername(username.trim()) ||
-                    submitting ||
                     checking ||
                     isAvailable === false
-                      ? "#b9b1b1"
-                      : "#F3F3F3",
+                  }
+                  style={{
+                    backgroundColor:
+                      !!validateUsername(username.trim()) ||
+                      submitting ||
+                      checking ||
+                      isAvailable === false
+                        ? "#b9b1b1"
+                        : "#F3F3F3",
                     borderRadius: 14,
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+                  }}
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

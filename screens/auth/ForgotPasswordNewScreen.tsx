@@ -10,6 +10,8 @@ import {
   Easing,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -119,186 +121,188 @@ const ForgotPasswordNewScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background2.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          <BackHeader handleBack={handleBack} />
-
-          {/* Keyboard avoiding for input fields */}
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            enabled={true}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-              <View style={styles.iconSection}>
-                <Ionicons
-                  name="lock-closed-outline"
-                  size={RFValue(24)}
-                  color={Theme.text.neutral}
+            <ImageBackground
+              source={require("@/assets/images/background2.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            <BackHeader handleBack={handleBack} />
+
+            {/* Keyboard avoiding for input fields */}
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                <View style={styles.iconSection}>
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={RFValue(24)}
+                    color={Theme.text.neutral}
+                  />
+                </View>
+
+                <Text style={styles.signupTitle}>Create new password</Text>
+
+                <View>
+                  <View style={styles.passwordInputContainer}>
+                    <TextInput
+                      style={[styles.inputBox, error && styles.inputError]}
+                      value={password}
+                      onChangeText={handlePasswordChange}
+                      placeholder="Enter new password"
+                      placeholderTextColor="#797979"
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPress={togglePasswordVisibility}
+                    >
+                      <Feather
+                        name={showPassword ? "eye" : "eye-off"}
+                        size={20}
+                        color="#797979"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  {error && <Text style={styles.errText}>{error}</Text>}
+                </View>
+
+                <View style={styles.requirementsSection}>
+                  <Text style={styles.requirementsTitle}>
+                    Your password must include:
+                  </Text>
+                  <View style={styles.requirementItem}>
+                    <Text
+                      style={[
+                        styles.requirementIcon,
+                        hasMinLength && styles.requirementMet,
+                      ]}
+                    >
+                      {hasMinLength ? "✓" : "○"}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.requirement,
+                        hasMinLength && styles.requirementMet,
+                      ]}
+                    >
+                      8-32 characters long
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text
+                      style={[
+                        styles.requirementIcon,
+                        hasLowercase && styles.requirementMet,
+                      ]}
+                    >
+                      {hasLowercase ? "✓" : "○"}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.requirement,
+                        hasLowercase && styles.requirementMet,
+                      ]}
+                    >
+                      1 lowercase character (a-z)
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text
+                      style={[
+                        styles.requirementIcon,
+                        hasUppercase && styles.requirementMet,
+                      ]}
+                    >
+                      {hasUppercase ? "✓" : "○"}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.requirement,
+                        hasUppercase && styles.requirementMet,
+                      ]}
+                    >
+                      1 uppercase character (A-Z)
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text
+                      style={[
+                        styles.requirementIcon,
+                        hasNumber && styles.requirementMet,
+                      ]}
+                    >
+                      {hasNumber ? "✓" : "○"}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.requirement,
+                        hasNumber && styles.requirementMet,
+                      ]}
+                    >
+                      1 number
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text
+                      style={[
+                        styles.requirementIcon,
+                        hasSpecialChar && styles.requirementMet,
+                      ]}
+                    >
+                      {hasSpecialChar ? "✓" : "○"}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.requirement,
+                        hasSpecialChar && styles.requirementMet,
+                      ]}
+                    >
+                      1 special character e.g. ! @ # $ %
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Continue"
+                  isLoading={isLoading}
+                  style={{
+                    backgroundColor: !password.trim() ? "#b9b1b1" : "#F3F3F3",
+                    borderRadius: 14,
+                  }}
                 />
               </View>
-
-              <Text style={styles.signupTitle}>Create new password</Text>
-
-              <View>
-                <View style={styles.passwordInputContainer}>
-                  <TextInput
-                    style={[styles.inputBox, error && styles.inputError]}
-                    value={password}
-                    onChangeText={handlePasswordChange}
-                    placeholder="Enter new password"
-                    placeholderTextColor="#797979"
-                    secureTextEntry={!showPassword}
-                    autoCapitalize="none"
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={togglePasswordVisibility}
-                  >
-                    <Feather
-                      name={showPassword ? "eye" : "eye-off"}
-                      size={20}
-                      color="#797979"
-                    />
-                  </TouchableOpacity>
-                </View>
-                {error && <Text style={styles.errText}>{error}</Text>}
-              </View>
-
-              <View style={styles.requirementsSection}>
-              <Text style={styles.requirementsTitle}>
-                Your password must include:
-              </Text>
-              <View style={styles.requirementItem}>
-                <Text
-                  style={[
-                    styles.requirementIcon,
-                    hasMinLength && styles.requirementMet,
-                  ]}
-                >
-                  {hasMinLength ? "✓" : "○"}
-                </Text>
-                <Text
-                  style={[
-                    styles.requirement,
-                    hasMinLength && styles.requirementMet,
-                  ]}
-                >
-                  8-32 characters long
-                </Text>
-              </View>
-              <View style={styles.requirementItem}>
-                <Text
-                  style={[
-                    styles.requirementIcon,
-                    hasLowercase && styles.requirementMet,
-                  ]}
-                >
-                  {hasLowercase ? "✓" : "○"}
-                </Text>
-                <Text
-                  style={[
-                    styles.requirement,
-                    hasLowercase && styles.requirementMet,
-                  ]}
-                >
-                  1 lowercase character (a-z)
-                </Text>
-              </View>
-              <View style={styles.requirementItem}>
-                <Text
-                  style={[
-                    styles.requirementIcon,
-                    hasUppercase && styles.requirementMet,
-                  ]}
-                >
-                  {hasUppercase ? "✓" : "○"}
-                </Text>
-                <Text
-                  style={[
-                    styles.requirement,
-                    hasUppercase && styles.requirementMet,
-                  ]}
-                >
-                  1 uppercase character (A-Z)
-                </Text>
-              </View>
-              <View style={styles.requirementItem}>
-                <Text
-                  style={[
-                    styles.requirementIcon,
-                    hasNumber && styles.requirementMet,
-                  ]}
-                >
-                  {hasNumber ? "✓" : "○"}
-                </Text>
-                <Text
-                  style={[
-                    styles.requirement,
-                    hasNumber && styles.requirementMet,
-                  ]}
-                >
-                  1 number
-                </Text>
-              </View>
-              <View style={styles.requirementItem}>
-                <Text
-                  style={[
-                    styles.requirementIcon,
-                    hasSpecialChar && styles.requirementMet,
-                  ]}
-                >
-                  {hasSpecialChar ? "✓" : "○"}
-                </Text>
-                <Text
-                  style={[
-                    styles.requirement,
-                    hasSpecialChar && styles.requirementMet,
-                  ]}
-                >
-                  1 special character e.g. ! @ # $ %
-                </Text>
-              </View>
-              </View>
-            </View>
-
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Continue"
-                isLoading={isLoading}
-                style={{
-                  backgroundColor: !password.trim() ? "#b9b1b1" : "#F3F3F3",
-                  borderRadius: 14,
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

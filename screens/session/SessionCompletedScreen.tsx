@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 const { useNavigation, useRoute } = require("@react-navigation/native");
 import { Theme } from "../../constants";
@@ -126,87 +136,96 @@ const SessionCompletedScreen: React.FC = () => {
       colors={["#243551", "#242D3C", "#14181B"]}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <AppStatusBar barStyle="light-content" />
-        <View className="flex-1 pt-3">
-          {/* Header */}
-          <ShadowHeader
-            title="Session Tracking"
-            onPress={() => navigation.goBack()}
-          />
-
-          {/* How do you feel now? Section */}
-          <View className="flex-1">
-            <SessionSlider
-              initialIndex={moodIndex}
-              onValueChange={setMoodIndex}
-              title="How do you feel now?"
-            />
-
-            {/* Notes Section */}
-            <View className="mb-8 px-4 mt-6">
-              <Text
-                className="mb-4"
-                style={{
-                  color: Theme.text.neutral,
-                  fontSize: 16,
-                  fontFamily: "InterMedium",
-                }}
-              >
-                Notes (optional)
-              </Text>
-              <TextInput
-                className="bg-white border-2 border-[#8BAFCE] p-4 text-gray-900"
-                placeholder="Add notes"
-                placeholderTextColor="#9CA3AF"
-                multiline
-                textAlignVertical="top"
-                value={notes}
-                onChangeText={setNotes}
-                style={{
-                  minHeight: 100,
-                  maxHeight: 130,
-                  fontSize: TEXT_SIZES.sm,
-                  borderRadius: 14,
-                }}
+      <AppStatusBar barStyle="light-content" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+            enabled={true}
+          >
+            <View className="flex-1 pt-3">
+              {/* Header */}
+              <ShadowHeader
+                title="Session Tracking"
+                onPress={() => navigation.goBack()}
               />
-            </View>
-          </View>
 
-          {/* End Session Button */}
-          <View className="pb-8 px-4">
-            <TouchableOpacity
-              className="py-4 px-6 flex-row items-center justify-center shadow-lg"
-              onPress={handleEndSession}
-              activeOpacity={0.8}
-              style={{
-                backgroundColor: "#57292C",
-                borderRadius: 100,
-              }}
-            >
-              <FontAwesome5 name="flag-checkered" size={20} color="#EB4335" />
-              <Text
-                className="ml-3"
+              {/* How do you feel now? Section */}
+              <View className="flex-1">
+                <SessionSlider
+                  initialIndex={moodIndex}
+                  onValueChange={setMoodIndex}
+                  title="How do you feel now?"
+                />
+
+                {/* Notes Section */}
+                <View className="mb-8 px-4 mt-6">
+                  <Text
+                    className="mb-4"
+                    style={{
+                      color: Theme.text.neutral,
+                      fontSize: 16,
+                      fontFamily: "InterMedium",
+                    }}
+                  >
+                    Notes (optional)
+                  </Text>
+                  <TextInput
+                    className="bg-white border-2 border-[#8BAFCE] p-4 text-gray-900"
+                    placeholder="Add notes"
+                    placeholderTextColor="#9CA3AF"
+                    multiline
+                    textAlignVertical="top"
+                    value={notes}
+                    onChangeText={setNotes}
+                    style={{
+                      minHeight: 100,
+                      maxHeight: 130,
+                      fontSize: TEXT_SIZES.sm,
+                      borderRadius: 14,
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+            {/* End Session Button */}
+            <View className="px-4">
+              <TouchableOpacity
+                className="py-4 px-6 flex-row items-center justify-center shadow-lg"
+                onPress={handleEndSession}
+                activeOpacity={0.8}
                 style={{
-                  fontSize: 16,
-                  fontFamily: "InterSemiBold",
-                  color: "#EB4335",
+                  backgroundColor: "#57292C",
+                  borderRadius: 100,
                 }}
               >
-                End Session
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <SessionAlertModal
-            visible={showSuccessModal}
-            onRequestClose={() => setShowSuccessModal(false)}
-            onConfirm={() => {
-              setShowSuccessModal(false);
-              navigation.replace("TabNavigator");
-            }}
-          />
-        </View>
-      </SafeAreaView>
+                <FontAwesome5 name="flag-checkered" size={20} color="#EB4335" />
+                <Text
+                  className="ml-3"
+                  style={{
+                    fontSize: 16,
+                    fontFamily: "InterSemiBold",
+                    color: "#EB4335",
+                  }}
+                >
+                  End Session
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+
+      <SessionAlertModal
+        visible={showSuccessModal}
+        onRequestClose={() => setShowSuccessModal(false)}
+        onConfirm={() => {
+          setShowSuccessModal(false);
+          navigation.replace("TabNavigator");
+        }}
+      />
     </LinearGradient>
   );
 };

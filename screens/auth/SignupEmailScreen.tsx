@@ -9,6 +9,8 @@ import {
   Easing,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -50,6 +52,7 @@ const SignupEmailScreen: React.FC = () => {
       dismissKeyboard();
 
       const response = await authApi.generateEmailOtp(email);
+      console.log("response", response);
       if (response?.success) {
         showToast.success("Verification code sent to your email");
         navigation.navigate(SCREEN_NAMES.SIGNUP_EMAIL_VERIFICATION, {
@@ -59,7 +62,6 @@ const SignupEmailScreen: React.FC = () => {
         showToast.error(response?.error || "Failed to send verification code");
       }
     } catch (e) {
-      console.warn("Email OTP generation error:", e);
       showToast.error("Network error while sending verification code");
     } finally {
       setSubmitting(false);
@@ -129,84 +131,90 @@ const SignupEmailScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <AppStatusBar barStyle="light-content" backgroundColor="transparent" />
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: animatedTop,
-              left: animatedLeft,
-              width: animatedWidth,
-              height: animatedHeight,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background2.png")}
-            style={styles.backgroundImage}
-            resizeMode="cover"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          {/* Back button */}
-          <BackHeader handleBack={handleBack} />
-
-          {/* Keyboard avoiding for input fields */}
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            enabled={true}
+      <AppStatusBar barStyle="light-content" backgroundColor="transparent" />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: animatedTop,
+                left: animatedLeft,
+                width: animatedWidth,
+                height: animatedHeight,
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-              {/* Icon */}
-              {/* <Text style={styles.icon}>@</Text> */}
-              <Ionicons name="at-outline" size={RFValue(25)} color="rgba(221, 226, 229, 1)" />
+            <ImageBackground
+              source={require("@/assets/images/background2.png")}
+              style={styles.backgroundImage}
+              resizeMode="cover"
+            />
+          </Animated.View>
 
-              {/* Title */}
-              <Text style={styles.title}>Enter your email address</Text>
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            {/* Back button */}
+            <BackHeader handleBack={handleBack} />
 
-              {/* Input */}
-              <TextInput
-                style={[styles.input, error ? styles.inputError : null]}
-                placeholder="Email address"
-                placeholderTextColor="#999"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (error) setError("");
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+            {/* Keyboard avoiding for input fields */}
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                {/* Icon */}
+                {/* <Text style={styles.icon}>@</Text> */}
+                <Ionicons
+                  name="at-outline"
+                  size={RFValue(25)}
+                  color="rgba(221, 226, 229, 1)"
+                />
 
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-            </View>
+                {/* Title */}
+                <Text style={styles.title}>Enter your email address</Text>
 
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Continue"
-                isLoading={submitting}
-                style={{
-                  backgroundColor:
-                    !email.trim() || submitting ? "#b9b1b1" : "#F3F3F3",
+                {/* Input */}
+                <TextInput
+                  style={[styles.input, error ? styles.inputError : null]}
+                  placeholder="Email address"
+                  placeholderTextColor="#999"
+                  value={email}
+                  onChangeText={(text) => {
+                    setEmail(text);
+                    if (error) setError("");
+                  }}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+
+                {error ? <Text style={styles.error}>{error}</Text> : null}
+              </View>
+
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Continue"
+                  isLoading={submitting}
+                  style={{
+                    backgroundColor:
+                      !email.trim() || submitting ? "#b9b1b1" : "#F3F3F3",
                     borderRadius: 14,
                     // marginBottom: 16
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+                  }}
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

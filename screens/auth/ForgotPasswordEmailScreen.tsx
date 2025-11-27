@@ -9,6 +9,8 @@ import {
   Easing,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -122,92 +124,94 @@ const ForgotPasswordEmailScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("../../assets/images/background1.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          <BackHeader handleBack={handleBack} />
-
-          {/* Keyboard avoiding for input fields */}
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
-            enabled={true}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-            <View style={styles.iconSection}>
-              <Ionicons
-                name="lock-closed-outline"
-                size={RFValue(24)}
-                color={Theme.text.neutral}
-                style={styles.lockIcon}
-              />
-            </View>
+            <ImageBackground
+              source={require("../../assets/images/background1.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
 
-            <Text style={styles.mainTitle}>Forgot your password?</Text>
-            <Text style={styles.subtitle}>
-              Enter the email associated with your account.
-            </Text>
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            <BackHeader handleBack={handleBack} />
 
-            <View>
-              <TextInput
-                style={[styles.inputBox, error && styles.inputError]}
-                onChangeText={handleEmailChange}
-                value={email}
-                placeholder="Email address"
-                placeholderTextColor="#797979"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              {error && <Text style={styles.errText}>{error}</Text>}
-            </View>
+            {/* Keyboard avoiding for input fields */}
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 15 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                <View style={styles.iconSection}>
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={RFValue(24)}
+                    color={Theme.text.neutral}
+                    style={styles.lockIcon}
+                  />
+                </View>
 
-            <View>
-              <Text style={styles.loginLinkText}>
-                Remember your password?{" "}
-                <Text style={styles.loginLink} onPress={handleLoginLink}>
-                  Log in.
+                <Text style={styles.mainTitle}>Forgot your password?</Text>
+                <Text style={styles.subtitle}>
+                  Enter the email associated with your account.
                 </Text>
-              </Text>
-            </View>
-          </View>
 
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Continue"
-                isLoading={isLoading}
-                style={{
-                  backgroundColor: !email.trim() ? "#b9b1b1" : "#F3F3F3",
-                  borderRadius: 14,
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+                <View>
+                  <TextInput
+                    style={[styles.inputBox, error && styles.inputError]}
+                    onChangeText={handleEmailChange}
+                    value={email}
+                    placeholder="Email address"
+                    placeholderTextColor="#797979"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                  />
+                  {error && <Text style={styles.errText}>{error}</Text>}
+                </View>
+
+                <View>
+                  <Text style={styles.loginLinkText}>
+                    Remember your password?{" "}
+                    <Text style={styles.loginLink} onPress={handleLoginLink}>
+                      Log in.
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Continue"
+                  isLoading={isLoading}
+                  style={{
+                    backgroundColor: !email.trim() ? "#b9b1b1" : "#F3F3F3",
+                    borderRadius: 14,
+                  }}
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

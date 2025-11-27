@@ -81,7 +81,7 @@ const ManageAccountScreen: React.FC = () => {
         <AppStatusBar barStyle="light-content" />
         <ScrollView
           className="px-4 py-4 h-screen"
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 200 }}
           showsVerticalScrollIndicator={false}
         >
           {loadFailed && (

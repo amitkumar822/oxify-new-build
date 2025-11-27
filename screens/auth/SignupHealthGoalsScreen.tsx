@@ -8,11 +8,12 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
   ScrollView,
   Animated,
   Easing,
   ImageBackground,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -20,12 +21,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const { useNavigation, useRoute } = require("@react-navigation/native");
 import { useHealthGoalTags } from "../../hooks/useHealthGoal";
 import { showToast } from "../../config/toast";
-import { AppStatusBar } from "@/helpers/AppStatusBar";
 import { BackHeader } from "@/helpers/BackHeader";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { RFValue } from "react-native-responsive-fontsize";
 import { TEXT_SIZES } from "@/constants/textSizes";
-import { hp, wp } from "@/constants/screenWH";
+import { hp } from "@/constants/screenWH";
 import Buttons from "@/components/common/Buttons";
 import { animatedDuration, screenHeight } from "@/constants/comman";
 import { Image } from "react-native";
@@ -179,95 +178,107 @@ const SignupHealthGoalsScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              transform: [{ rotateX }],
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("../../assets/images/background2.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          <BackHeader handleBack={handleBack} />
-
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            enabled={true}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                transform: [{ rotateX }],
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-              {/* <AntDesign
+            <ImageBackground
+              source={require("../../assets/images/background2.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            <BackHeader handleBack={handleBack} />
+
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                {/* <AntDesign
                 name="heart"
                 size={TEXT_SIZES.xxl}
                 color="white"
                 style={styles.heartIcon}
               /> */}
-              <Image source={require("../../assets/icons/heart.png")} style={styles.heartIcon} width={28} height={25}/>
+                <Image
+                  source={require("../../assets/icons/heart.png")}
+                  style={styles.heartIcon}
+                  width={28}
+                  height={25}
+                />
                 <Text style={styles.title}>Choose your health goal tags</Text>
 
-              <View style={styles.inputWrap}>
-                <TextInput
-                  style={styles.inputBox}
-                  value={search}
-                  onChangeText={setSearch}
-                  placeholder="Health goals"
-                  placeholderTextColor="#797979"
-                />
+                <View style={styles.inputWrap}>
+                  <TextInput
+                    style={styles.inputBox}
+                    value={search}
+                    onChangeText={setSearch}
+                    placeholder="Health goals"
+                    placeholderTextColor="#797979"
+                  />
+                </View>
+
+                {isLoading ? (
+                  <View style={styles.loader}>
+                    <ActivityIndicator
+                      color={Theme.action.primary}
+                      size="large"
+                    />
+                  </View>
+                ) : error ? (
+                  <Text style={styles.errorText}>
+                    Failed to load health goals .
+                  </Text>
+                ) : (
+                  <View style={styles.goalsSectionWrap}>
+                    <ScrollView
+                      style={styles.tagsScrollView}
+                      showsVerticalScrollIndicator={false}
+                      nestedScrollEnabled={true}
+                    >
+                      <View style={styles.tagsContainer}>
+                        {renderTags(filteredTags)}
+                      </View>
+                    </ScrollView>
+                  </View>
+                )}
               </View>
 
-              {isLoading ? (
-                <View style={styles.loader}>
-                  <ActivityIndicator color={Theme.action.primary} size="large" />
-                </View>
-              ) : error ? (
-                <Text style={styles.errorText}>Failed to load health goals .</Text>
-              ) : (
-                <View style={styles.goalsSectionWrap}>
-                  <ScrollView
-                    style={styles.tagsScrollView}
-                    showsVerticalScrollIndicator={false}
-                    nestedScrollEnabled={true}
-                  >
-                    <View style={styles.tagsContainer}>
-                      {renderTags(filteredTags)}
-                    </View>
-                  </ScrollView>
-                </View>
-              )}
-            </View>
-
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Continue"
-                isLoading={submitting}
-                style={{
-                  backgroundColor:
-                    selectedGoals.length === 0 || isLoading
-                      ? "#b9b1b1"
-                      : "#F3F3F3",
-                  borderRadius: 14,
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Continue"
+                  isLoading={submitting}
+                  style={{
+                    backgroundColor:
+                      selectedGoals.length === 0 || isLoading
+                        ? "#b9b1b1"
+                        : "#F3F3F3",
+                    borderRadius: 14,
+                  }}
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

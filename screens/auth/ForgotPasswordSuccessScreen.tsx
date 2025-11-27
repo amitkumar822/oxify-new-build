@@ -6,6 +6,8 @@ import {
   Animated,
   Easing,
   ImageBackground,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -78,55 +80,57 @@ const ForgotPasswordSuccessScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background1.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
+          >
+            <ImageBackground
+              source={require("@/assets/images/background1.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
 
-        {/* Success Content */}
-        <Animated.View
-          style={[styles.content, { transform: [{ translateY: slideAnim }] }]}
-        >
-          <View style={styles.iconSection}>
-            <View style={styles.checkmarkContainer}>
-              <Entypo name="check" size={RFValue(30)} color="#000000" />
+          {/* Success Content */}
+          <Animated.View
+            style={[styles.content, { transform: [{ translateY: slideAnim }] }]}
+          >
+            <View style={styles.iconSection}>
+              <View style={styles.checkmarkContainer}>
+                <Entypo name="check" size={RFValue(30)} color="#000000" />
+              </View>
             </View>
-          </View>
 
-          <Text style={styles.mainTitle}>Success!</Text>
-          <Text style={styles.subtitle}>
-            Your password has been changed successfully!
-          </Text>
-        </Animated.View>
+            <Text style={styles.mainTitle}>Success!</Text>
+            <Text style={styles.subtitle}>
+              Your password has been changed successfully!
+            </Text>
+          </Animated.View>
 
-        {/* Login button - Fixed position */}
-        <Animated.View
-          style={[
-            styles.buttonContainer,
-            { transform: [{ translateY: buttonAnim }] },
-          ]}
-        >
-          <Buttons
-            onPress={handleLogin}
-            title="Login"
-            style={{
-              opacity: 1,
-            }}
-          />
-        </Animated.View>
-      </SafeAreaView>
+          {/* Login button - Fixed position */}
+          <Animated.View
+            style={[
+              styles.buttonContainer,
+              { transform: [{ translateY: buttonAnim }] },
+            ]}
+          >
+            <Buttons
+              onPress={handleLogin}
+              title="Login"
+              style={{
+                opacity: 1,
+              }}
+            />
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };
@@ -198,6 +202,6 @@ const styles = StyleSheet.create({
     bottom: 40,
     left: 24,
     right: 24,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 });

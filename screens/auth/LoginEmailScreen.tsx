@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Animated,
   ImageBackground,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { SCREEN_NAMES, Theme } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,7 +21,7 @@ import { AppStatusBar } from "@/helpers/AppStatusBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TEXT_SIZES } from "@/constants/textSizes";
 import { RFValue } from "react-native-responsive-fontsize";
-import useKeyboard, { useKeyboardDismissOnMount } from "@/utils/useKeyboard";
+import useKeyboard from "@/utils/useKeyboard";
 
 const isValidEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,7 +59,6 @@ const LoginEmailScreen: FC = () => {
     }
   };
 
-
   const onSubmit = async () => {
     if (!isValidEmail(email)) {
       setError("Please enter a valid email address");
@@ -90,69 +91,73 @@ const LoginEmailScreen: FC = () => {
       style={styles.gradient}
     >
       <AppStatusBar barStyle="light-content" />
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("@/assets/images/background1.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        {/* Back button */}
-        <BackHeader handleBack={handleBack} />
-
-        {/* Keyboard avoiding only for input fields */}
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 60}
-          enabled={true}
-          
-        >
-          {/* Icon */}
-          <Text style={styles.icon}>@</Text>
-
-          <Text style={styles.mainTitle}>Enter your  email</Text>
-
-          <View>
-            <TextInput
-              style={[styles.inputBox, error && styles.inputError]}
-              onChangeText={(text) => {
-                setEmail(text);
-                if (error) setError("");
-              }}
-              value={email}
-              placeholder="Email address"
-              placeholderTextColor="#797979"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={true}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
+          >
+            <ImageBackground
+              source={require("@/assets/images/background1.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
             />
-            {error && <Text style={styles.errText}>{error}</Text>}
-          </View>
+          </Animated.View>
 
-          {/* Continue button */}
-          <View style={{ marginTop: "auto",borderRadius: 14 }}>
-            <Buttons
-              onPress={onSubmit}
-              title="Continue"
-              isLoading={loading}
-              style={{
-                backgroundColor: !email.trim() ? "#b9b1b1" : "rgba(221, 226, 229, 1)",borderRadius: 14 ,
-              }}
-            />
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+          {/* Back button */}
+          <BackHeader handleBack={handleBack} />
+
+          {/* Keyboard avoiding only for input fields */}
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 60}
+            enabled={true}
+          >
+            {/* Icon */}
+            <Text style={styles.icon}>@</Text>
+
+            <Text style={styles.mainTitle}>Enter your email</Text>
+
+            <View>
+              <TextInput
+                style={[styles.inputBox, error && styles.inputError]}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (error) setError("");
+                }}
+                value={email}
+                placeholder="Email address"
+                placeholderTextColor="#797979"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={true}
+              />
+              {error && <Text style={styles.errText}>{error}</Text>}
+            </View>
+
+            {/* Continue button */}
+            <View style={{ marginTop: "auto", borderRadius: 14 }}>
+              <Buttons
+                onPress={onSubmit}
+                title="Continue"
+                isLoading={loading}
+                style={{
+                  backgroundColor: !email.trim()
+                    ? "#b9b1b1"
+                    : "rgba(221, 226, 229, 1)",
+                  borderRadius: 14,
+                }}
+              />
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };

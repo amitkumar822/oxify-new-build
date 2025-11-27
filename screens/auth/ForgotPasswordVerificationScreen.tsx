@@ -3,24 +3,23 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   TextInput,
   Animated,
   ImageBackground,
   Easing,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { Theme, SCREEN_NAMES } from "../../constants";
 import { LinearGradient } from "expo-linear-gradient";
 const { useNavigation, useRoute } = require("@react-navigation/native");
 import { showToast } from "../../config/toast";
 import { authApi } from "../../api/auth";
-import { AppStatusBar } from "@/helpers/AppStatusBar";
 import { BackHeader } from "@/helpers/BackHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TEXT_SIZES } from "@/constants/textSizes";
-import { hp, wp } from "@/constants/screenWH";
 import Buttons from "@/components/common/Buttons";
 import { Feather } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -143,93 +142,97 @@ const ForgotPasswordVerificationScreen: React.FC = () => {
       end={{ x: 0.5, y: 0 }}
       style={styles.gradient}
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Animated.View
-          style={[
-            styles.background,
-            {
-              top: backgroundPosition.y,
-              left: backgroundPosition.x,
-            },
-          ]}
-        >
-          <ImageBackground
-            source={require("../../assets/images/background1.png")}
-            style={styles.backgroundImage}
-            resizeMode="contain"
-          />
-        </Animated.View>
-
-        <Animated.View
-          style={{
-            flex: 1,
-            transform: [{ translateY: slideAnim }],
-          }}
-        >
-          <BackHeader handleBack={handleBack} />
-
-          {/* Keyboard avoiding for input fields */}
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            enabled={true}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                top: backgroundPosition.y,
+                left: backgroundPosition.x,
+              },
+            ]}
           >
-            <View style={styles.contentContainer}>
-            <View style={styles.iconSection}>
-              <Feather name="mail" size={RFValue(25)} color="white" />
-            </View>
+            <ImageBackground
+              source={require("../../assets/images/background1.png")}
+              style={styles.backgroundImage}
+              resizeMode="contain"
+            />
+          </Animated.View>
 
-            <Text style={styles.mainTitle}>Check your email</Text>
-            <Text style={styles.subtitle}>
-              We sent a verification code to{"\n"}
-              <Text style={styles.emailText}>{email}</Text>
-            </Text>
+          <Animated.View
+            style={{
+              flex: 1,
+              transform: [{ translateY: slideAnim }],
+            }}
+          >
+            <BackHeader handleBack={handleBack} />
 
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={[styles.inputBox, error && styles.inputError]}
-                onChangeText={handleOtpChange}
-                value={otp}
-                placeholder="Enter verification code"
-                placeholderTextColor="#797979"
-                keyboardType="numeric"
-                autoCapitalize="none"
-                autoCorrect={false}
-                maxLength={6}
-              />
-              {error && <Text style={styles.errText}>{error}</Text>}
-            </View>
+            {/* Keyboard avoiding for input fields */}
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+              enabled={true}
+            >
+              <View style={styles.contentContainer}>
+                <View style={styles.iconSection}>
+                  <Feather name="mail" size={RFValue(25)} color="white" />
+                </View>
 
-            <View style={styles.resendSection}>
-              <Text style={styles.resendText}>Didn't receive the code? </Text>
-              <Text
-                style={[
-                  styles.resendLink,
-                  resendTimer > 0 && styles.resendLinkDisabled,
-                ]}
-                onPress={handleResendCode}
-              >
-                {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend"}
-              </Text>
+                <Text style={styles.mainTitle}>Check your email</Text>
+                <Text style={styles.subtitle}>
+                  We sent a verification code to{"\n"}
+                  <Text style={styles.emailText}>{email}</Text>
+                </Text>
+
+                <View style={styles.inputWrap}>
+                  <TextInput
+                    style={[styles.inputBox, error && styles.inputError]}
+                    onChangeText={handleOtpChange}
+                    value={otp}
+                    placeholder="Enter verification code"
+                    placeholderTextColor="#797979"
+                    keyboardType="numeric"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    maxLength={6}
+                  />
+                  {error && <Text style={styles.errText}>{error}</Text>}
+                </View>
+
+                <View style={styles.resendSection}>
+                  <Text style={styles.resendText}>
+                    Didn't receive the code?{" "}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.resendLink,
+                      resendTimer > 0 && styles.resendLinkDisabled,
+                    ]}
+                    onPress={handleResendCode}
+                  >
+                    {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend"}
+                  </Text>
+                </View>
               </View>
-            </View>
 
-            {/* Continue button */}
-            <View style={styles.buttonContainer}>
-              <Buttons
-                onPress={handleContinue}
-                title="Continue"
-                isLoading={isLoading}
-                style={{
-                  backgroundColor: !otp.trim() ? "#b9b1b1" : "#F3F3F3",
-                  borderRadius: 14,
-                }}
-              />
-            </View>
-          </KeyboardAvoidingView>
-        </Animated.View>
-      </SafeAreaView>
+              {/* Continue button */}
+              <View style={styles.buttonContainer}>
+                <Buttons
+                  onPress={handleContinue}
+                  title="Continue"
+                  isLoading={isLoading}
+                  style={{
+                    backgroundColor: !otp.trim() ? "#b9b1b1" : "#F3F3F3",
+                    borderRadius: 14,
+                  }}
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </Animated.View>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
     </LinearGradient>
   );
 };
