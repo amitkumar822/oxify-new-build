@@ -241,7 +241,10 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
           <View className="items-center mb-4">
             <View className="h-1 w-[48px] rounded-full bg-white/30" />
           </View>
-          <Text className="text-white text-center" style={{ fontSize: 18, fontFamily: "InterSemiBold" }}>
+          <Text
+            className="text-white text-center"
+            style={{ fontSize: 18, fontFamily: "InterSemiBold" }}
+          >
             Comments
           </Text>
         </View>
@@ -302,9 +305,23 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
           {replyingTo && (
             <View className="mb-3 p-3 bg-[#1e293b] rounded-lg">
               <View className="flex-row items-center justify-between">
-                <Text style={{ fontSize: 11, fontFamily: "InterRegular", lineHeight: 15, color: "#ABB0BC" }}>
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontFamily: "InterRegular",
+                    lineHeight: 15,
+                    color: "#ABB0BC",
+                  }}
+                >
                   Replying to{" "}
-                  <Text style={{ fontSize: 11, fontFamily: "InterSemiBold", lineHeight: 15, color: "#4C8BF5" }}>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      fontFamily: "InterSemiBold",
+                      lineHeight: 15,
+                      color: "#4C8BF5",
+                    }}
+                  >
                     {replyingTo.username}
                   </Text>
                 </Text>
@@ -315,6 +332,7 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
             </View>
           )}
 
+          {/* Add Comment Input */}
           <View className="flex-row items-center px-4">
             <Image
               source={
@@ -324,7 +342,7 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
               }
               className="h-[31px] w-[31px] rounded-full mr-3"
             />
-            <View className="flex-1 flex-row items-center bg-[#515A66] rounded-[12px] px-4">
+            <View className="flex-1 flex-row items-center bg-[#515A66] rounded-[12px] px-4 mb-4">
               <TextInput
                 ref={inputRef}
                 placeholder={
@@ -334,7 +352,12 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
                 }
                 placeholderTextColor="rgba(217, 217, 217, 0.5)"
                 className="flex-1 text-white py-3"
-                style={{ fontSize: 9, fontFamily: "InterRegular", lineHeight: 14, color: "#E6E6E6" }}
+                style={{
+                  fontSize: 13,
+                  fontFamily: "InterRegular",
+                  lineHeight: 14,
+                  color: "#E6E6E6",
+                }}
                 value={replyText}
                 onChangeText={setReplyText}
                 multiline

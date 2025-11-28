@@ -70,7 +70,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
         <Text
           className="text-white"
           style={{
-            fontSize: 14,
+            fontSize: 15,
             fontFamily: "InterSemiBold",
           }}
         >
@@ -93,7 +93,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
 
       <Text
         style={{
-          fontSize: 11,
+          fontSize: 12.5,
           fontFamily: "InterRegular",
           lineHeight: 14,
           color: "#D9D9D9",
@@ -113,7 +113,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
           <Text
             className="text-[#D9D9D9] "
             style={{
-              fontSize: 9,
+              fontSize: 10.5,
               fontFamily: "InterRegular",
             }}
           >
@@ -130,7 +130,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
           <Text
             className="text-[#D9D9D9] "
             style={{
-              fontSize: 9,
+              fontSize: 10.5,
               fontFamily: "InterRegular",
             }}
           >
@@ -146,7 +146,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
           <Text
             className="text-[#D9D9D9] "
             style={{
-              fontSize: 9,
+              fontSize: 10.5,
               fontFamily: "InterRegular",
             }}
           >
@@ -161,7 +161,7 @@ const ProtocolCard: React.FC<ProtocolCardProps> = ({
       >
         <Text
           className="text-white text-center"
-          style={{ fontSize: 14, fontFamily: "InterSemiBold" }}
+          style={{ fontSize: 15, fontFamily: "InterSemiBold" }}
         >
           Start Session
         </Text>

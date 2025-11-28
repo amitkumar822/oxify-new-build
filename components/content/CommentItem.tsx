@@ -187,11 +187,22 @@ const CommentItem: React.FC<CommentItemProps> = ({
             <View className="flex-row items-center mb-1">
               <Text
                 className="text-white mr-2"
-                style={{ color: Theme.text.lightBlue, fontSize: 13, fontFamily: "InterSemiBold" }}
+                style={{
+                  color: Theme.text.lightBlue,
+                  fontSize: 15,
+                  fontFamily: "InterSemiBold",
+                }}
               >
                 {capitalizeFirst(user_name ?? "User")}
               </Text>
-              <Text style={{ fontSize: 9, fontFamily: "InterRegular", lineHeight: 15, color: "#ABB0BC" }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontFamily: "InterRegular",
+                  lineHeight: 15,
+                  color: "#ABB0BC",
+                }}
+              >
                 {formatTimestamp(created_at)}
                 {is_edited && " (edited)"}
               </Text>
@@ -201,7 +212,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             <Text
               className="text-gray-200 mb-2"
               style={{
-                fontSize: 11,
+                fontSize: 13,
                 fontFamily: "InterRegular",
                 color: "#E6E6E6",
                 lineHeight: 15,
@@ -221,7 +232,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
               onPress={() => onReply?.(id, parent, parent !== null ? id : null)}
             >
               <Text
-                style={{ fontSize: 9, fontFamily: "InterRegular", lineHeight: 15, color: "#ABB0BC" }}
+                style={{
+                  fontSize: 11,
+                  fontFamily: "InterRegular",
+                  lineHeight: 15,
+                  color: "#ABB0BC",
+                }}
               >
                 Reply
               </Text>
@@ -239,7 +255,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
             />
           </Animated.View>
           {optimisticCount > 0 && (
-            <Text style={{ fontSize: 9, fontFamily: "InterRegular", lineHeight: 12, color: "#ABB0BC", marginTop: 2 }}>
+            <Text
+              style={{
+                fontSize: 11,
+                fontFamily: "InterRegular",
+                lineHeight: 12,
+                color: "#ABB0BC",
+                marginTop: 2,
+              }}
+            >
               {optimisticCount}
             </Text>
           )}

@@ -94,7 +94,6 @@ export const useAddReaction = () => {
     }) => learningApi.addLearningReaction(contentId, reactionType),
     onSuccess: (data) => {
       if (data.success) {
-        showToast.success("Reaction added!");
         // Invalidate learning content and reaction counts so UI updates
         queryClient.invalidateQueries({ queryKey: queryKeys.learning.all });
       } else {
