@@ -26,7 +26,7 @@ const RenderChamberCard: React.FC<RenderChamberCardProps> = ({
           style={{
             // iOS shadow properties
             ...(Platform.OS === 'ios' && {
-              shadowColor: isSelected ? "#4C8BF566" : "transparent",
+              shadowColor: isSelected ? "yellow" : "transparent",
               shadowOffset: { width: 1, height: 2 },
               shadowOpacity: 0.8,
               shadowRadius: 4,
@@ -34,7 +34,7 @@ const RenderChamberCard: React.FC<RenderChamberCardProps> = ({
             // Android shadow and border
             ...(Platform.OS === 'android' && {
               borderRadius: 20,
-              shadowColor: isSelected ? "#4C8BF566" : "transparent",
+              shadowColor: isSelected ? "yellow" : "transparent",
               elevation: 2,
             }),
           }}

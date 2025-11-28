@@ -121,7 +121,6 @@ export const useAddComment = () => {
     }) => learningApi.addComment(contentId, comment, parent, tag),
     onSuccess: (data) => {
       if (data.success) {
-        showToast.success("Comment added!");
         // Invalidate learning content queries
         queryClient.invalidateQueries({ queryKey: queryKeys.learning.all });
       } else {
@@ -225,7 +224,6 @@ export const usePostArticle = () => {
     }) => learningApi.postArticle(title, categories, content),
     onSuccess: (data) => {
       if (data.success) {
-        showToast.success("Article posted successfully!");
         // Invalidate learning content queries to refresh the UI
         queryClient.invalidateQueries({ queryKey: queryKeys.learning.all });
       } else {
