@@ -10,11 +10,11 @@ import {
   Animated,
   PanResponder,
   ActivityIndicator,
+  Platform,
+  Keyboard,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Theme } from "@/constants";
-import { TEXT_SIZES } from "@/constants/textSizes";
 import CommentItem from "./CommentItem";
 import { useComments } from "@/hooks_main/useLearning";
 import { useAddComment } from "@/hooks_main/useLearning";
@@ -127,6 +127,8 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
   const [sheetHeight, setSheetHeight] = useState(0);
   const translateY = useRef(new Animated.Value(400)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
+  const keyboardOffset = useRef(new Animated.Value(0)).current;
+  const [keyboardPadding, setKeyboardPadding] = useState(0);
 
   const animateOpen = () => {
     Animated.parallel([
@@ -198,6 +200,45 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
     [sheetHeight]
   );
 
+  // Handle keyboard visibility
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === "android" ? "keyboardDidShow" : "keyboardWillShow";
+    const hideEvent =
+      Platform.OS === "android" ? "keyboardDidHide" : "keyboardWillHide";
+
+    const handleShow = (e: any) => {
+      const padding = Math.max(
+        0,
+        e.endCoordinates?.height - (insets.bottom - 30)
+      );
+      setKeyboardPadding(padding);
+      Animated.timing(keyboardOffset, {
+        toValue: -padding,
+        duration: 210,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const handleHide = () => {
+      setKeyboardPadding(0);
+      Animated.timing(keyboardOffset, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const showSub = Keyboard.addListener(showEvent, handleShow);
+    const hideSub = Keyboard.addListener(hideEvent, handleHide);
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [insets.bottom]);
+
   return (
     <Modal
       transparent
@@ -231,7 +272,7 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          maxHeight: "80%",
+          maxHeight: "83%",
           transform: [{ translateY }],
         }}
         onLayout={(e) => setSheetHeight(e.nativeEvent.layout.height)}
@@ -282,6 +323,9 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
               scrollEventThrottle={0}
               bounces={false}
               decelerationRate="fast"
+              contentContainerStyle={{
+                paddingBottom: insets.bottom + 120 + keyboardPadding,
+              }}
             >
               {comments.map((comment: any) => (
                 <CommentItem
@@ -299,8 +343,13 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
         </View>
 
         {/* Input */}
-        <View className="h-[0.6px] bg-[#515A66]" />
-        <View className="px-4 py-3">
+
+        <Animated.View
+          className="px-4 py-3 bg-[#0F172A] mb-4"
+          style={{ transform: [{ translateY: keyboardOffset }] }}
+        >
+          <View className="h-[0.6px] bg-[#515A66] mb-3" />
+
           {/* Reply indicator */}
           {replyingTo && (
             <View className="mb-3 p-3 bg-[#1e293b] rounded-lg">
@@ -333,7 +382,7 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
           )}
 
           {/* Add Comment Input */}
-          <View className="flex-row items-center px-4">
+          <View className="flex-row items-center justify-center px-4">
             <Image
               source={
                 profileImage
@@ -342,7 +391,7 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
               }
               className="h-[31px] w-[31px] rounded-full mr-3"
             />
-            <View className="flex-1 flex-row items-center bg-[#515A66] rounded-[12px] px-4 mb-4">
+            <View className="flex-1 flex-row items-center bg-[#515A66] rounded-[12px] px-4">
               <TextInput
                 ref={inputRef}
                 placeholder={
@@ -353,7 +402,7 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
                 placeholderTextColor="rgba(217, 217, 217, 0.5)"
                 className="flex-1 text-white py-3"
                 style={{
-                  fontSize: 13,
+                  fontSize: 14,
                   fontFamily: "InterRegular",
                   lineHeight: 14,
                   color: "#E6E6E6",
@@ -369,13 +418,13 @@ const CommentsBottomSheet: React.FC<CommentsBottomSheetProps> = ({
               >
                 <MaterialIcons
                   name="send"
-                  size={22}
+                  size={23}
                   color={replyText.trim() ? "#4C8BF5" : "#6b7280"}
                 />
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </Animated.View>
     </Modal>
   );

@@ -10,6 +10,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   Keyboard,
+  Modal,
 } from "react-native";
 import { TEXT_SIZES } from "@/constants/textSizes";
 import {
@@ -45,6 +46,7 @@ const PostYourArticle: React.FC<PostYourArticleProps> = ({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [showDiscardModal, setShowDiscardModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handlePost = () => {
     if (!selectedCategory || !title.trim() || !content.trim()) {
@@ -63,6 +65,8 @@ const PostYourArticle: React.FC<PostYourArticleProps> = ({
           setSelectedCategory(null);
           setTitle("");
           setContent("");
+          // Show success modal
+          setShowSuccessModal(true);
           onSuccess && onSuccess();
         },
       }
@@ -95,6 +99,12 @@ const PostYourArticle: React.FC<PostYourArticleProps> = ({
     }
   };
 
+  const isPostDisabled =
+    !selectedCategory ||
+    !title.trim() ||
+    !content.trim() ||
+    postArticleMutation.isPending;
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -119,7 +129,7 @@ const PostYourArticle: React.FC<PostYourArticleProps> = ({
                     <View className="h-[2px] w-[49px] rounded-full bg-white/30" />
                   </View>
                 )}
-                <View className="relative flex-row items-center justify-center mb-2 w-full py-4 shadow-blue-500">
+                <View className="relative flex-row items-center justify-center mb-2 w-full py-4 pt-6 shadow-blue-500">
                   <TouchableOpacity onPress={handleBackPress}>
                     <AntDesign name="left" size={20} color="white" />
                   </TouchableOpacity>
@@ -290,14 +300,13 @@ const PostYourArticle: React.FC<PostYourArticleProps> = ({
                 ) : (
                   <TouchableOpacity
                     onPress={handlePost}
-                    style={{ backgroundColor: "#4C8BF566", opacity: 40 }}
+                    style={{
+                      backgroundColor: isPostDisabled
+                        ? "rgba(76, 139, 245, 0.4)"
+                        : "#4C8BF5",
+                    }}
                     className="py-4 rounded-[36px] items-center"
-                    disabled={
-                      !selectedCategory ||
-                      !title.trim() ||
-                      !content.trim() ||
-                      postArticleMutation.isPending
-                    }
+                    disabled={isPostDisabled}
                   >
                     {postArticleMutation.isPending ? (
                       <View className="flex-row items-center">
@@ -331,6 +340,102 @@ const PostYourArticle: React.FC<PostYourArticleProps> = ({
             </View>
           </KeyboardAvoidingView>
         </View>
+
+        {/* Success Modal */}
+        <Modal
+          visible={showSuccessModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowSuccessModal(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setShowSuccessModal(false)}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableWithoutFeedback>
+                <View
+                  style={{
+                    backgroundColor: "#E5E5E7",
+                    borderRadius: 14,
+                    width: "85%",
+                    maxWidth: 320,
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* Title */}
+                  <View style={{ paddingTop: 20, paddingHorizontal: 20 }}>
+                    <Text
+                      style={{
+                        fontSize: 19,
+                        color: "#090A0B",
+                        textAlign: "center",
+                        marginBottom: 8,
+                        fontFamily: "InterSemiBold",
+                        lineHeight: 20,
+                      }}
+                    >
+                      Post sent for verification
+                    </Text>
+                  </View>
+
+                  {/* Body Message */}
+                  <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "400",
+                        color: "#090A0B",
+                        textAlign: "center",
+                        lineHeight: 18,
+                        fontFamily: "InterRegular",
+                      }}
+                    >
+                      Your article has been forwarded for administrative review
+                      and will be published upon approval.
+                    </Text>
+                  </View>
+
+                  {/* Separator */}
+                  <View
+                    style={{
+                      height: 0.5,
+                      backgroundColor: "#C6C6C8",
+                      marginHorizontal: 0,
+                    }}
+                  />
+
+                  {/* Alright Button */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.goBack();
+                    }}
+                    style={{
+                      paddingVertical: 12,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 19,
+                        color: "#007AFF",
+                        fontFamily: "InterSemiBold",
+                      }}
+                    >
+                      Alright
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

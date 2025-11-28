@@ -143,7 +143,6 @@ export const useLikeComment = () => {
     mutationFn: (commentId: number) => learningApi.likeComment(commentId),
     onSuccess: (data) => {
       if (data.success) {
-        showToast.success("Comment liked!");
         // Invalidate learning content queries
         queryClient.invalidateQueries({ queryKey: queryKeys.learning.all });
       } else {

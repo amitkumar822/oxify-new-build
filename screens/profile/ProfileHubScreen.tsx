@@ -111,7 +111,7 @@ const ProfileHubScreen: React.FC = () => {
 
     // ✅ compress before upload
     const image = result.assets?.[0]?.uri;
-    const compressedImage = await ImageCompress(image!, 100);
+    const compressedImage = await ImageCompress(image!, 200);
     const imageUri = compressedImage?.uri;
 
     if (!result.canceled && imageUri) {
@@ -149,7 +149,7 @@ const ProfileHubScreen: React.FC = () => {
 
     // ✅ compress before upload
     const image = result.assets?.[0]?.uri;
-    const compressedImage = await ImageCompress(image!, 100);
+    const compressedImage = await ImageCompress(image!, 200);
     const imageUri = compressedImage?.uri;
 
     if (!result.canceled && imageUri) {

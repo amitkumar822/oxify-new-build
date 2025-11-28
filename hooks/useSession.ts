@@ -9,7 +9,7 @@ export const useUserSessions = () => {
   const authReady = useAuthReady();
   return useQuery({
     queryKey: queryKeys.sessions.lists(),
-    queryFn: sessionApi.getSessions,
+    queryFn: () => sessionApi.getSessions({ page: 1, perPage: 100 }),
     // staleTime: 5 * 60 * 1000, // 5 minutes (temporarily disabled caching)
     // gcTime: 10 * 60 * 1000, // 10 minutes (temporarily disabled caching)
     enabled: authReady,
