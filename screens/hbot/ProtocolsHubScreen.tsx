@@ -19,7 +19,6 @@ import { Theme, SCREEN_NAMES } from "@/constants";
 import { Image } from "react-native";
 import ArticleCard from "../../components/content/ArticleCard";
 import ProtocolCard from "../../components/content/ProtocolCard";
-import PostArticleBottomSheet from "../../components/content/PostArticleBottomSheet";
 import {
   useProtocolCategoryList,
   useSuggestedProtocolsFiltered,
@@ -61,7 +60,6 @@ const ProtocolsHubScreen: React.FC = () => {
   const [activeLearningCategoryId, setActiveLearningCategoryId] = useState<
     number | undefined
   >(undefined);
-  const [isPostArticleOpen, setIsPostArticleOpen] = useState(false);
   const refreshAnimation = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
 
@@ -414,7 +412,9 @@ const ProtocolsHubScreen: React.FC = () => {
                     </View>
                     <TouchableOpacity
                       className="ml-3  h-12 w-12 items-center justify-center"
-                      onPress={() => setIsPostArticleOpen(true)}
+                      onPress={() =>
+                        navigation.navigate("PostYourArticle" as never)
+                      }
                     >
                       {/* Use svg for add icon, '/assets/svg/plus.svg' */}
                       <Image
@@ -573,12 +573,6 @@ const ProtocolsHubScreen: React.FC = () => {
               </>
             </View>
           </>
-
-          {/* PostArticleBottomSheet rendered at root level */}
-          <PostArticleBottomSheet
-            visible={isPostArticleOpen}
-            onClose={() => setIsPostArticleOpen(false)}
-          />
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>

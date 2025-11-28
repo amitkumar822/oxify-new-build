@@ -1,34 +1,36 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  Modal,
   View,
   Text,
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Animated,
-  PanResponder,
   ActivityIndicator,
+  TouchableWithoutFeedback,
+  Platform,
+  KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { TEXT_SIZES } from "@/constants/textSizes";
-import { useLearningCategories, usePostArticle } from "@/hooks_main/useLearning";
+import {
+  useLearningCategories,
+  usePostArticle,
+} from "@/hooks_main/useLearning";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppStatusBar } from "@/helpers/AppStatusBar";
+const { useNavigation } = require("@react-navigation/native");
 
-interface PostArticleBottomSheetProps {
-  visible: boolean;
-  onClose: () => void;
+interface PostYourArticleProps {
+  onSuccess?: () => void;
+  onBack?: () => void;
 }
 
-interface PostArticleBottomSheetProps {
-  visible: boolean;
-  onClose: () => void;
-}
-
-const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
-  visible,
-  onClose,
+const PostYourArticle: React.FC<PostYourArticleProps> = ({
+  onSuccess,
+  onBack,
 }) => {
+  const navigation: any = useNavigation();
   const { data: categoriesData, isLoading: isCategoriesLoading } =
     useLearningCategories();
   const postArticleMutation = usePostArticle();
@@ -39,91 +41,10 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
     return Array.isArray(payload) ? payload : [];
   }, [categoriesData]);
 
-  const [sheetHeight, setSheetHeight] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [showDiscardModal, setShowDiscardModal] = useState(false);
-  const translateY = useRef(new Animated.Value(400)).current;
-  const overlayOpacity = useRef(new Animated.Value(0)).current;
-
-  const animateOpen = () => {
-    Animated.parallel([
-      Animated.timing(overlayOpacity, {
-        toValue: 1,
-        duration: 180,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const animateClose = (onDone?: () => void) => {
-    const distance = sheetHeight || 400;
-    Animated.parallel([
-      Animated.timing(overlayOpacity, {
-        toValue: 0,
-        duration: 180,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: distance,
-        duration: 220,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      onDone && onDone();
-    });
-  };
-
-  useEffect(() => {
-    if (visible) {
-      // Reset position before opening
-      translateY.setValue(sheetHeight || 400);
-      overlayOpacity.setValue(0);
-      requestAnimationFrame(animateOpen);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
-
-  // Handle system back button through Modal's onRequestClose
-  const handleRequestClose = () => {
-    const hasContent =
-      selectedCategory !== null || title.trim() || content.trim();
-    if (hasContent) {
-      setShowDiscardModal(true);
-    } else {
-      animateClose(onClose);
-    }
-  };
-
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: (_, g) => g.dy > 4,
-        onPanResponderMove: (_, g) => {
-          if (g.dy > 0) {
-            translateY.setValue(g.dy);
-          }
-        },
-        onPanResponderRelease: (_, g) => {
-          const threshold = (sheetHeight || 400) * 0.15;
-          if (g.dy > threshold || g.vy > 0.8) {
-            animateClose(onClose);
-          } else {
-            Animated.spring(translateY, {
-              toValue: 0,
-              useNativeDriver: true,
-            }).start();
-          }
-        },
-      }),
-    [sheetHeight]
-  );
 
   const handlePost = () => {
     if (!selectedCategory || !title.trim() || !content.trim()) {
@@ -142,7 +63,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
           setSelectedCategory(null);
           setTitle("");
           setContent("");
-          onClose();
+          onSuccess && onSuccess();
         },
       }
     );
@@ -154,7 +75,11 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
     if (hasContent) {
       setShowDiscardModal(true);
     } else {
-      animateClose(onClose);
+      if (onBack) {
+        onBack();
+      } else {
+        navigation.goBack();
+      }
     }
   };
 
@@ -163,101 +88,53 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
     setSelectedCategory(null);
     setTitle("");
     setContent("");
-    animateClose(onClose);
+    if (onBack) {
+      onBack();
+    } else {
+      navigation.goBack();
+    }
   };
 
   return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="none"
-      onRequestClose={handleRequestClose}
-      statusBarTranslucent
-      hardwareAccelerated
-      presentationStyle="overFullScreen"
-      supportedOrientations={["portrait"]}
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+        setShowDiscardModal(false);
+      }}
     >
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
-        <View style={{ flex: 1, backgroundColor: "transparent" }}>
-          {/* Backdrop */}
-          <Animated.View
-            pointerEvents="none"
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              marginTop: 200,
-              backgroundColor: "black",
-              opacity: overlayOpacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 0.5],
-              }),
-            }}
-          />
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#0F172A" }}>
+        <View style={{ flex: 1 }}>
+          <AppStatusBar backgroundColor="#0F172A" barStyle="light-content" />
 
-          {/* Touchable backdrop */}
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={handleBackPress}
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 300,
-              bottom: 0,
-              zIndex: 1,
-              paddingTop: 400,
-            }}
-          />
-
-          {/* Modal Content - Fixed at bottom */}
-          <Animated.View
-            style={{
-              position: "absolute",
-              // top:400,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 1000,
-              marginTop: 400,
-              transform: [{ translateY }],
-              backgroundColor: "#0F172A",
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              overflow: "hidden",
-              elevation: 1000,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: -2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-            }}
-            onLayout={(e) => setSheetHeight(e.nativeEvent.layout.height)}
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
           >
-            <View className="overflow-hidden ">
+            <View className="overflow-hidden flex-1">
               {/* Handle and header */}
-              <View className="px-4 pt-2 pb-2" {...panResponder.panHandlers}>
-                <View className="items-center mb-2 mt-3">
-                  <View className="h-[2px] w-[49px] rounded-full bg-white/30" />
-                </View>
-                <View className="relative flex-row items-center justify-center mb-4 w-full py-4  shadow-blue-500 ">
+              <View className="px-4 pb-2">
+                {Platform.OS === "ios" && (
+                  <View className="items-center mb-2 mt-5">
+                    <View className="h-[2px] w-[49px] rounded-full bg-white/30" />
+                  </View>
+                )}
+                <View className="relative flex-row items-center justify-center mb-2 w-full py-4 shadow-blue-500">
                   <TouchableOpacity onPress={handleBackPress}>
-                    <AntDesign
-                      name="left"
-                      size={20}
-                      color="white"
-                    />
+                    <AntDesign name="left" size={20} color="white" />
                   </TouchableOpacity>
                   <Text
                     className="text-center flex-1 mr-6"
-                    style={{ fontSize: 18, fontFamily: "InterSemiBold", color: "#DDE2E5" }}
+                    style={{
+                      fontSize: 18,
+                      fontFamily: "InterSemiBold",
+                      color: "#DDE2E5",
+                    }}
                   >
                     Post your Article
                   </Text>
                 </View>
               </View>
-              {/* <View className="h-[1px] bg-white/15" /> */}
 
               {/* Content */}
               <ScrollView
@@ -273,7 +150,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                 {/* Category Selection */}
                 <View className="mb-6">
                   <Text
-                    className="text-white  mb-3"
+                    className="text-white mb-3"
                     style={{
                       fontSize: 14,
                       fontFamily: "InterSemiBold",
@@ -307,7 +184,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                           }`}
                         >
                           <Text
-                            className={` ${
+                            className={`${
                               selectedCategory === category.id
                                 ? "text-white"
                                 : "text-gray-500"
@@ -332,7 +209,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                     placeholderTextColor="rgba(255, 255, 255, 0.7)"
                     value={title}
                     onChangeText={setTitle}
-                    className="text-white text-lg "
+                    className="text-white text-lg"
                     style={{
                       fontSize: 16,
                       fontFamily: "InterSemiBold",
@@ -342,7 +219,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                 </View>
 
                 {/* Content Input */}
-                <View className=" min-h-[200px] max-h-[300px]">
+                <>
                   <TextInput
                     placeholder="What do you want to talk about?"
                     placeholderTextColor="rgba(255, 255, 255, 0.6)"
@@ -350,18 +227,18 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                     onChangeText={setContent}
                     multiline
                     textAlignVertical="top"
-                    className="text-[#D9D9D9] text-base text-left min-h-[200px]"
+                    className="text-[#D9D9D9] text-base text-left min-h-[80px] max-h-[150px]"
                     style={{
                       fontSize: 14,
                       fontFamily: "InterRegular",
                       color: "#D9D9D9",
                     }}
                   />
-                </View>
+                </>
               </ScrollView>
 
               {/* Post Button or Discard Confirmation */}
-              <View className=" px-4 py-4 ">
+              <View className="px-4 py-4">
                 {showDiscardModal ? (
                   <View>
                     <View className="bg-gray-600 py-3 mb-3 sm:py-5 rounded-2xl items-center flex-row justify-center">
@@ -399,7 +276,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                         style={{ backgroundColor: "#F5493B4D" }}
                       >
                         <Text
-                          className=" text-[#f55546]"
+                          className="text-[#f55546]"
                           style={{
                             fontFamily: "InterSemiBold",
                             fontSize: 14,
@@ -426,7 +303,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                       <View className="flex-row items-center">
                         <ActivityIndicator size="small" color="white" />
                         <Text
-                          className="text-white  ml-2"
+                          className="text-white ml-2"
                           style={{
                             fontSize: TEXT_SIZES.md,
                             fontWeight: "600",
@@ -438,7 +315,7 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                       </View>
                     ) : (
                       <Text
-                        className="text-white "
+                        className="text-white"
                         style={{
                           fontSize: 16,
                           fontFamily: "InterSemiBold",
@@ -452,11 +329,11 @@ const PostArticleBottomSheet: React.FC<PostArticleBottomSheetProps> = ({
                 )}
               </View>
             </View>
-          </Animated.View>
+          </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
-    </Modal>
+    </TouchableWithoutFeedback>
   );
 };
 
-export default PostArticleBottomSheet;
+export default PostYourArticle;

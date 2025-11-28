@@ -29,6 +29,7 @@ import SessionInProgressScreen from "../screens/session/SessionInProgressScreen"
 import SessionCompletedScreen from "../screens/session/SessionCompletedScreen";
 import CustomTabBar from "../components/navigation/CustomTabBar";
 import SessionDetailsScreen from "@/screens/main/SessionDetailsScreen";
+import PostYourArticle from "@/components/content/helper/PostYourArticle";
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -109,6 +110,15 @@ const MainNavigator: React.FC = () => {
       {/* Other Navigators */}
       <MainStack.Screen name="SettingsStack" component={SettingsNavigator} />
       <MainStack.Screen name="ContentStack" component={ContentNavigator} />
+
+      {/* Post Article Screen */}
+      <MainStack.Screen
+        name="PostYourArticle"
+        component={PostYourArticle}
+        options={{
+          presentation: "modal",
+        }}
+      />
     </MainStack.Navigator>
   );
 };

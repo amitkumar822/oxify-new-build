@@ -52,7 +52,7 @@ const SignupEmailScreen: React.FC = () => {
       dismissKeyboard();
 
       const response = await authApi.generateEmailOtp(email);
-      console.log("response", response);
+      // console.log("response", response);
       if (response?.success) {
         showToast.success("Verification code sent to your email");
         navigation.navigate(SCREEN_NAMES.SIGNUP_EMAIL_VERIFICATION, {
